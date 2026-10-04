@@ -1,0 +1,523 @@
+---
+interface Props {
+  loja: {
+    nomeLoja: string;
+    whatsapp: string;
+    chavePix: string;
+    tipoChavePix: string;
+    titularPix: string;
+  };
+}
+
+const { loja } = Astro.props;
+---
+
+<!-- Drawer do Carrinho -->
+<div
+  id="cart-drawer-container"
+  class="fixed inset-0 z-50 pointer-events-none transition-opacity duration-300 opacity-0"
+  aria-hidden="true"
+>
+  <!-- Backdrop Escurecido -->
+  <div
+    id="cart-backdrop"
+    class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
+  ></div>
+
+  <!-- Painel Lateral -->
+  <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+    <div
+      id="cart-panel"
+      class="w-screen max-w-md bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 pointer-events-auto"
+    >
+      <!-- Topo do Carrinho -->
+      <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">Meu Carrinho</h2>
+            <span id="cart-items-count-header" class="text-xs text-slate-500 dark:text-slate-400">0 itens adicionados</span>
+          </div>
+        </div>
+
+        <button
+          id="cart-close-btn"
+          type="button"
+          class="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800 transition"
+          aria-label="Fechar carrinho"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Lista de Itens do Carrinho -->
+      <div id="cart-items-list" class="flex-1 overflow-y-auto p-6 space-y-4">
+        <!-- Renderizado dinamicamente pelo JavaScript -->
+      </div>
+
+      <!-- Estado Vazio -->
+      <div id="cart-empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center">
+        <div class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl mb-4">
+          🛒
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Seu carrinho está vazio</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs mb-6">
+          Adicione produtos fresquinhos e ofertas especiais para começar suas compras.
+        </p>
+        <button
+          id="cart-empty-explore-btn"
+          class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-md transition"
+        >
+          Explorar Ofertas
+        </button>
+      </div>
+
+      <!-- Rodapé com Totais e Botões de Checkout (PIX e WhatsApp) -->
+      <div id="cart-footer" class="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/80 space-y-4">
+        
+        <!-- Opção de Entrega ou Retirada -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-700 dark:text-slate-300">Tipo de Entrega:</span>
+            <div class="flex gap-2">
+              <label class="inline-flex items-center gap-1 cursor-pointer">
+                <input type="radio" name="tipo-entrega" value="entrega" checked class="text-brand-600 focus:ring-brand-500" />
+                <span class="text-slate-700 dark:text-slate-300 font-medium">Entrega</span>
+              </label>
+              <label class="inline-flex items-center gap-1 cursor-pointer">
+                <input type="radio" name="tipo-entrega" value="retirada" class="text-brand-600 focus:ring-brand-500" />
+                <span class="text-slate-700 dark:text-slate-300 font-medium">Retirar na Loja</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="campo-endereco-container">
+            <input
+              type="text"
+              id="cart-cliente-endereco"
+              placeholder="Endereço com número e bairro para entrega..."
+              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+            />
+          </div>
+        </div>
+
+        <!-- Resumo Financeiro -->
+        <div class="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-800 text-sm">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
+            <span>Subtotal</span>
+            <span id="cart-subtotal" class="font-semibold text-slate-700 dark:text-slate-300">R$ 0,00</span>
+          </div>
+          <div class="flex items-center justify-between text-base font-extrabold text-slate-900 dark:text-white pt-1">
+            <span>Total a Pagar</span>
+            <span id="cart-total" class="text-xl text-emerald-600 dark:text-emerald-400 font-black">R$ 0,00</span>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="space-y-2 pt-2">
+          <!-- Botão Principal: Pagar com PIX -->
+          <button
+            id="btn-pagar-pix"
+            type="button"
+            class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 transition-all transform hover:scale-[1.01]"
+          >
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+              <path d="M12.003 2.003a2.4 2.4 0 00-1.697.703L3.71 9.302a2.4 2.4 0 000 3.395l6.596 6.596a2.4 2.4 0 003.395 0l6.596-6.596a2.4 2.4 0 000-3.395L13.7 2.706a2.4 2.4 0 00-1.697-.703zm0 4.195l4.5 4.5-4.5 4.5-4.5-4.5 4.5-4.5z"/>
+            </svg>
+            <span>Pagar Agora com PIX</span>
+          </button>
+
+          <!-- Botão Secundário: Finalizar via WhatsApp (Dinheiro / Cartão na entrega) -->
+          <button
+            id="btn-finalizar-whatsapp"
+            type="button"
+            class="w-full py-2.5 px-4 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition"
+          >
+            <svg class="w-4 h-4 fill-current text-emerald-600" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            <span>Pedir e Pagar na Entrega (Cartão/Dinheiro)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Pagamento com PIX -->
+<div
+  id="pix-modal-container"
+  class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm"
+>
+  <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl text-slate-900 dark:text-white">
+    <!-- Fechar Modal -->
+    <button
+      id="pix-modal-close"
+      type="button"
+      class="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+
+    <div class="flex items-center gap-3 mb-5">
+      <div class="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-600 dark:text-teal-400">
+        <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24">
+          <path d="M12.003 2.003a2.4 2.4 0 00-1.697.703L3.71 9.302a2.4 2.4 0 000 3.395l6.596 6.596a2.4 2.4 0 003.395 0l6.596-6.596a2.4 2.4 0 000-3.395L13.7 2.706a2.4 2.4 0 00-1.697-.703zm0 4.195l4.5 4.5-4.5 4.5-4.5-4.5 4.5-4.5z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-xl font-black">Pagamento Instantâneo via PIX</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Aprovação imediata e separação prioritária</p>
+      </div>
+    </div>
+
+    <!-- Valor em Destaque -->
+    <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 rounded-2xl p-4 text-center mb-6">
+      <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">Valor Total do Pedido</span>
+      <div id="pix-modal-total" class="text-3xl font-black text-emerald-700 dark:text-emerald-400 mt-0.5">
+        R$ 0,00
+      </div>
+    </div>
+
+    <!-- QR Code PIX -->
+    <div class="flex flex-col sm:flex-row items-center gap-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 mb-6">
+      <div class="w-36 h-36 bg-white p-2 rounded-xl shadow-sm border border-slate-200 shrink-0 flex items-center justify-center">
+        <img
+          id="pix-qrcode-img"
+          src=""
+          alt="QR Code PIX para pagamento"
+          class="w-full h-full object-contain"
+        />
+      </div>
+
+      <div class="space-y-2 text-xs text-slate-600 dark:text-slate-300 flex-1">
+        <div>
+          <span class="font-bold text-slate-900 dark:text-white block">Titular:</span>
+          <span>{loja.titularPix}</span>
+        </div>
+        <div>
+          <span class="font-bold text-slate-900 dark:text-white block">Tipo de Chave:</span>
+          <span>{loja.tipoChavePix}</span>
+        </div>
+        <div>
+          <span class="font-bold text-slate-900 dark:text-white block">Chave PIX:</span>
+          <span class="font-mono text-emerald-700 dark:text-emerald-400 font-bold select-all">{loja.chavePix}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chave PIX Copia e Cola -->
+    <div class="mb-6 space-y-1.5">
+      <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        Chave PIX para Copiar
+      </label>
+      <div class="flex gap-2">
+        <input
+          type="text"
+          id="pix-chave-input"
+          readonly
+          value={loja.chavePix}
+          class="flex-1 px-3 py-2.5 text-xs font-mono rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 focus:outline-none"
+        />
+        <button
+          id="btn-copiar-pix"
+          type="button"
+          class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shrink-0 transition"
+        >
+          Copiar Chave
+        </button>
+      </div>
+      <span id="pix-copiado-feedback" class="hidden text-xs font-bold text-emerald-600">✓ Chave copiada para a área de transferência!</span>
+    </div>
+
+    <!-- Botão de Confirmação no WhatsApp -->
+    <div class="space-y-2">
+      <button
+        id="btn-confirmar-pix-whatsapp"
+        type="button"
+        class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg transition"
+      >
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+        <span>Enviar Pedido + Comprovante no WhatsApp</span>
+      </button>
+      <p class="text-[11px] text-center text-slate-400">
+        Após fazer a transferência, envie o comprovante para separarmos suas compras imediatamente!
+      </p>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ lojaWhatsapp: loja.whatsapp, chavePix: loja.chavePix, titularPix: loja.titularPix }}>
+  // Gerenciador de Carrinho no Navegador (Cliente)
+  interface CartItem {
+    slug: string;
+    nome: string;
+    preco: number;
+    unidade: string;
+    imagem: string;
+    quantidade: number;
+  }
+
+  const STORAGE_KEY = 'bompreco_cart_v1';
+
+  function getCart(): CartItem[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveCart(cart: CartItem[]) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+      window.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart } }));
+    } catch (e) {
+      console.error('Erro ao salvar carrinho:', e);
+    }
+  }
+
+  // Elementos do DOM
+  const drawerContainer = document.getElementById('cart-drawer-container');
+  const cartBackdrop = document.getElementById('cart-backdrop');
+  const cartPanel = document.getElementById('cart-panel');
+  const cartCloseBtn = document.getElementById('cart-close-btn');
+  const cartItemsList = document.getElementById('cart-items-list');
+  const cartEmptyState = document.getElementById('cart-empty-state');
+  const cartFooter = document.getElementById('cart-footer');
+  const cartItemsCountHeader = document.getElementById('cart-items-count-header');
+  const cartSubtotal = document.getElementById('cart-subtotal');
+  const cartTotal = document.getElementById('cart-total');
+  const cartEmptyExploreBtn = document.getElementById('cart-empty-explore-btn');
+
+  // Modal PIX
+  const pixModalContainer = document.getElementById('pix-modal-container');
+  const pixModalClose = document.getElementById('pix-modal-close');
+  const pixModalTotal = document.getElementById('pix-modal-total');
+  const pixQrcodeImg = document.getElementById('pix-qrcode-img');
+  const btnPagarPix = document.getElementById('btn-pagar-pix');
+  const btnCopiarPix = document.getElementById('btn-copiar-pix');
+  const pixCopiadoFeedback = document.getElementById('pix-copiado-feedback');
+  const btnConfirmarPixWhatsapp = document.getElementById('btn-confirmar-pix-whatsapp');
+  const btnFinalizarWhatsapp = document.getElementById('btn-finalizar-whatsapp');
+  const inputEndereco = document.getElementById('cart-cliente-endereco');
+
+  function formatBRL(val) {
+    return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function openCart() {
+    if (!drawerContainer || !cartPanel) return;
+    drawerContainer.classList.remove('pointer-events-none', 'opacity-0');
+    drawerContainer.classList.add('opacity-100');
+    cartPanel.classList.remove('translate-x-full');
+    renderCart();
+  }
+
+  function closeCart() {
+    if (!drawerContainer || !cartPanel) return;
+    cartPanel.classList.add('translate-x-full');
+    drawerContainer.classList.remove('opacity-100');
+    drawerContainer.classList.add('opacity-0', 'pointer-events-none');
+  }
+
+  function renderCart() {
+    const cart = getCart();
+    if (!cartItemsList || !cartEmptyState || !cartFooter || !cartItemsCountHeader) return;
+
+    const totalItens = cart.reduce((acc, item) => acc + item.quantidade, 0);
+    cartItemsCountHeader.textContent = `${totalItens} ${totalItens === 1 ? 'item adicionado' : 'itens adicionados'}`;
+
+    if (cart.length === 0) {
+      cartItemsList.innerHTML = '';
+      cartItemsList.classList.add('hidden');
+      cartFooter.classList.add('hidden');
+      cartEmptyState.classList.remove('hidden');
+      return;
+    }
+
+    cartEmptyState.classList.add('hidden');
+    cartItemsList.classList.remove('hidden');
+    cartFooter.classList.remove('hidden');
+
+    let totalGeral = 0;
+
+    cartItemsList.innerHTML = cart
+      .map((item) => {
+        const itemTotal = item.preco * item.quantidade;
+        totalGeral += itemTotal;
+
+        return `
+          <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+            <img src="${item.imagem}" alt="${item.nome}" class="w-14 h-14 object-cover rounded-xl shrink-0 border border-slate-200 dark:border-slate-700" />
+            <div class="flex-1 min-w-0">
+              <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">${item.nome}</h4>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400 block">${formatBRL(item.preco)} / ${item.unidade}</span>
+              <div class="flex items-center gap-2 mt-1.5">
+                <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900">
+                  <button class="cart-qtd-btn px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-l" data-slug="${item.slug}" data-delta="-1">-</button>
+                  <span class="px-2 text-xs font-bold text-slate-800 dark:text-white">${item.quantidade}</span>
+                  <button class="cart-qtd-btn px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-r" data-slug="${item.slug}" data-delta="1">+</button>
+                </div>
+                <span class="text-xs font-extrabold text-slate-900 dark:text-emerald-400 ml-auto">${formatBRL(itemTotal)}</span>
+              </div>
+            </div>
+            <button class="cart-remove-btn text-slate-400 hover:text-red-500 p-1.5 transition" data-slug="${item.slug}" title="Remover item">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+          </div>
+        `;
+      })
+      .join('');
+
+    if (cartSubtotal) cartSubtotal.textContent = formatBRL(totalGeral);
+    if (cartTotal) cartTotal.textContent = formatBRL(totalGeral);
+
+    // Eventos de quantidade e exclusão
+    document.querySelectorAll('.cart-qtd-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget;
+        const slug = target.getAttribute('data-slug');
+        const delta = parseInt(target.getAttribute('data-delta') || '0', 10);
+        alterarQuantidade(slug, delta);
+      });
+    });
+
+    document.querySelectorAll('.cart-remove-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget;
+        const slug = target.getAttribute('data-slug');
+        removerItem(slug);
+      });
+    });
+  }
+
+  function alterarQuantidade(slug, delta) {
+    let cart = getCart();
+    const item = cart.find((i) => i.slug === slug);
+    if (!item) return;
+
+    item.quantidade += delta;
+    if (item.quantidade <= 0) {
+      cart = cart.filter((i) => i.slug !== slug);
+    }
+    saveCart(cart);
+    renderCart();
+  }
+
+  function removerItem(slug) {
+    let cart = getCart();
+    cart = cart.filter((i) => i.slug !== slug);
+    saveCart(cart);
+    renderCart();
+  }
+
+  // API Global do Carrinho para outros componentes utilizarem
+  window.carrinhoMercado = {
+    adicionar(produto) {
+      const cart = getCart();
+      const existente = cart.find((i) => i.slug === produto.slug);
+      if (existente) {
+        existente.quantidade += 1;
+      } else {
+        cart.push({ ...produto, quantidade: 1 });
+      }
+      saveCart(cart);
+      openCart();
+    },
+    abrir: openCart,
+    fechar: closeCart,
+    limpar() {
+      saveCart([]);
+      renderCart();
+    }
+  };
+
+  // Listeners de abertura/fechamento
+  cartBackdrop?.addEventListener('click', closeCart);
+  cartCloseBtn?.addEventListener('click', closeCart);
+  cartEmptyExploreBtn?.addEventListener('click', () => {
+    closeCart();
+    window.location.href = '/produtos';
+  });
+
+  // Modal PIX
+  btnPagarPix?.addEventListener('click', () => {
+    const cart = getCart();
+    if (cart.length === 0) return;
+
+    const total = cart.reduce((acc, item) => acc + item.preco * item.quantidade, 0);
+    if (pixModalTotal) pixModalTotal.textContent = formatBRL(total);
+
+    // Gera QR Code PIX com imagem usando a chave
+    if (pixQrcodeImg) {
+      const textoPix = `Chave: ${chavePix} | Valor: ${formatBRL(total)} | Favorecido: ${titularPix}`;
+      pixQrcodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(textoPix)}`;
+    }
+
+    pixModalContainer?.classList.remove('hidden');
+    pixModalContainer?.classList.add('flex');
+  });
+
+  pixModalClose?.addEventListener('click', () => {
+    pixModalContainer?.classList.add('hidden');
+    pixModalContainer?.classList.remove('flex');
+  });
+
+  btnCopiarPix?.addEventListener('click', () => {
+    navigator.clipboard.writeText(chavePix).then(() => {
+      if (pixCopiadoFeedback) {
+        pixCopiadoFeedback.classList.remove('hidden');
+        setTimeout(() => pixCopiadoFeedback.classList.add('hidden'), 3500);
+      }
+    });
+  });
+
+  function gerarTextoPedido(tipoPagamento) {
+    const cart = getCart();
+    const endereco = inputEndereco?.value.trim() || 'A combinar / Retirada na loja';
+    const tipoEntregaEl = document.querySelector('input[name="tipo-entrega"]:checked');
+    const tipoEntrega = tipoEntregaEl ? tipoEntregaEl.value : 'entrega';
+
+    let total = 0;
+    let lista = cart
+      .map((item) => {
+        const sub = item.preco * item.quantidade;
+        total += sub;
+        return `• *${item.quantidade}x ${item.nome}* (${item.unidade}): ${formatBRL(sub)}`;
+      })
+      .join('\n');
+
+    let msg = `🛒 *NOVO PEDIDO - MERCADO BOM PREÇO*\n\n`;
+    msg += `📦 *Itens do Pedido:*\n${lista}\n\n`;
+    msg += `💰 *Valor Total:* *${formatBRL(total)}*\n`;
+    msg += `💳 *Forma de Pagamento:* *${tipoPagamento}*\n`;
+    msg += `📍 *Entrega:* ${tipoEntrega === 'entrega' ? 'Entrega em domicílio' : 'Retirada na loja'}\n`;
+    msg += `🏠 *Endereço/Info:* ${endereco}\n\n`;
+    if (tipoPagamento.includes('PIX')) {
+      msg += `✅ *Obs:* Já realizei a transferência via PIX. Segue comprovante em anexo!`;
+    } else {
+      msg += `Por favor, confirmem o recebimento do pedido para separação!`;
+    }
+    return encodeURIComponent(msg);
+  }
+
+  btnConfirmarPixWhatsapp?.addEventListener('click', () => {
+    const msg = gerarTextoPedido('PIX (Pago via App)');
+    window.open(`https://wa.me/${lojaWhatsapp}?text=${msg}`, '_blank');
+  });
+
+  btnFinalizarWhatsapp?.addEventListener('click', () => {
+    const msg = gerarTextoPedido('Pagar na Entrega (Cartão / Dinheiro)');
+    window.open(`https://wa.me/${lojaWhatsapp}?text=${msg}`, '_blank');
+  });
+
+  // Atualiza badges em qualquer mudança
+  window.addEventListener('cart:updated', () => {
+    renderCart();
+  });
+
+  // Inicializa renderização
+  renderCart();
+</script>

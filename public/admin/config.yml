@@ -1,0 +1,75 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Ativa o backend local para desenvolvimento e testes
+local_backend: true
+
+# Idioma da interface do CMS
+locale: pt
+
+# Onde as imagens serão salvas e como serão referenciadas
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  # ----------------------------------------------------
+  # 1. PRODUTOS DO MERCADO
+  # ----------------------------------------------------
+  - name: "produtos"
+    label: "Produtos"
+    label_singular: "Produto"
+    folder: "src/content/produtos"
+    create: true
+    slug: "{{slug}}"
+    format: "frontmatter"
+    editor:
+      preview: true
+    summary: "{{nome}} - R$ {{preco}} ({{categoria}})"
+    fields:
+      - { label: "Nome do Produto", name: "nome", widget: "string" }
+      - { label: "Preço Regular (R$)", name: "preco", widget: "number", value_type: "float", step: 0.01 }
+      - { label: "Preço Promocional (Opcional - R$)", name: "precoPromocional", widget: "number", value_type: "float", step: 0.01, required: false }
+      - { label: "Unidade de Medida", name: "unidade", widget: "select", default: "un", options: ["kg", "un", "500g", "pct", "litro", "bandeja", "dúzia"] }
+      - { label: "Categoria", name: "categoria", widget: "select", options: [
+          "Frutas e Verduras",
+          "Carnes e Aves",
+          "Laticínios",
+          "Mercearia",
+          "Limpeza",
+          "Bebidas",
+          "Padaria",
+          "Higiene"
+        ] }
+      - { label: "Descrição Curta", name: "descricao", widget: "text" }
+      - { label: "Foto do Produto", name: "imagem", widget: "image" }
+      - { label: "Disponível em Estoque?", name: "disponivel", widget: "boolean", default: true }
+      - { label: "Destacar na Página Inicial?", name: "destaque", widget: "boolean", default: false }
+      - { label: "Observações ou Detalhes Extras", name: "body", widget: "markdown", required: false }
+
+  # ----------------------------------------------------
+  # 2. CONFIGURAÇÕES DA LOJA E INFORMAÇÕES
+  # ----------------------------------------------------
+  - name: "configuracoes"
+    label: "Configurações do Mercado"
+    files:
+      - label: "Dados da Loja & Horários"
+        name: "loja"
+        file: "src/content/configuracoes/loja.json"
+        fields:
+          - { label: "Nome do Mercado", name: "nomeLoja", widget: "string", default: "Mercado Bom Preço" }
+          - { label: "Slogan / Frase", name: "slogan", widget: "string", default: "Economia e qualidade pertinho de você todos os dias!" }
+          - { label: "Telefone de Contato", name: "telefone", widget: "string", default: "(11) 3456-7890" }
+          - { label: "WhatsApp para Pedidos (apenas números)", name: "whatsapp", widget: "string", default: "5511999998888" }
+          - { label: "Endereço Completo", name: "endereco", widget: "string", default: "Rua das Flores, 123 - Centro" }
+          - { label: "Bairro e Cidade", name: "cidadeBairro", widget: "string", default: "Bairro Jardim - São Paulo, SP" }
+          - { label: "Link do Google Maps para Rotas", name: "googleMapsUrl", widget: "string", default: "https://maps.google.com" }
+          - { label: "Código Embed do Google Maps (URL do src)", name: "googleMapsEmbed", widget: "string", default: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.197587027958!2d-46.6543167!3d-23.5613476!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzQwLjkiUyA0NsKwMzknMTUuNSJX!5e0!3m2!1spt-BR!2sbr!4v1600000000000" }
+          - { label: "Horário Seg a Sáb", name: "horarioSemana", widget: "string", default: "07:30 às 20:30" }
+          - { label: "Horário Domingos e Feriados", name: "horarioDomingo", widget: "string", default: "08:00 às 13:00" }
+          - { label: "Aviso Especial no Topo (ex: Aberto no feriado)", name: "bannerAviso", widget: "string", required: false, default: "🎉 Ofertas especiais de Hortifruti toda quarta e quinta-feira!" }
+          - { label: "Título do Banner Principal", name: "bannerTitulo", widget: "string", default: "Ofertas que Cabem no Seu Bolso" }
+          - { label: "Subtítulo do Banner Principal", name: "bannerSubtitulo", widget: "string", default: "Produtos frescos selecionados, carnes nobres e marcas que você confia com preços imbatíveis." }
+          - { label: "Chave PIX da Loja", name: "chavePix", widget: "string", default: "11999998888" }
+          - { label: "Tipo da Chave PIX (ex: CNPJ, Celular, E-mail)", name: "tipoChavePix", widget: "string", default: "Celular / WhatsApp" }
+          - { label: "Nome do Titular do PIX", name: "titularPix", widget: "string", default: "Mercado Bom Preço Ltda" }

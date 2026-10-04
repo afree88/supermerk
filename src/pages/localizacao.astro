@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const configEntry = await getEntry('configuracoes', 'loja');
+const loja = configEntry?.data ?? {
+  nomeLoja: 'Mercado Bom Preço',
+  telefone: '(11) 3456-7890',
+  whatsapp: '5511999998888',
+  endereco: 'Rua das Flores, 123 - Centro',
+  cidadeBairro: 'São Paulo, SP',
+  horarioSemana: '07h30 às 20h30',
+  horarioDomingo: '08h00 às 13h30',
+  googleMapsUrl: 'https://maps.google.com',
+  googleMapsEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.197587027958!2d-46.6543167!3d-23.5613476!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzQwLjkiUyA0NsKwMzknMTUuNSJX!5e0!3m2!1spt-BR!2sbr!4v1600000000000',
+};
+---
+
+<BaseLayout
+  title={`Onde Estamos & Localização - ${loja.nomeLoja}`}
+  description="Venha nos visitar! Veja o mapa, endereço e como chegar ao Mercado Bom Preço. Estacionamento gratuito para clientes."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    
+    <!-- Cabeçalho -->
+    <div class="max-w-3xl mb-12">
+      <span class="text-xs uppercase font-extrabold tracking-wider text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/60 dark:border-brand-800/80 px-3.5 py-1.5 rounded-full inline-block mb-3">
+        Venha nos Visitar
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        Localização Fácil e Estacionamento Próprio
+      </h1>
+      <p class="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+        Localizado estrategicamente no coração do bairro, com fácil acesso para pedestres, transporte público e carros.
+      </p>
+    </div>
+
+    <!-- Container do Mapa do Google Maps -->
+    <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-slate-200/90 dark:border-slate-800 mb-12 bg-slate-100 dark:bg-slate-800 aspect-[16/9] max-h-[500px]">
+      <iframe
+        src={loja.googleMapsEmbed}
+        width="100%"
+        height="100%"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title={`Mapa de localização do ${loja.nomeLoja}`}
+        class="w-full h-full"
+      ></iframe>
+    </div>
+
+    <!-- Informações de Rota, Estacionamento e Horários -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      
+      <!-- Card 1: Endereço & Trajeto -->
+      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-card flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl mb-4">
+            📍
+          </div>
+          <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Endereço Completo</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            {loja.endereco}<br />
+            {loja.cidadeBairro}
+          </p>
+          <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">
+            Ponto de referência: ao lado da Farmácia Central e em frente à Praça das Flores.
+          </p>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+          <a
+            href={loja.googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs transition shadow-sm"
+          >
+            <span>Abrir no Google Maps</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 2: Estacionamento & Conveniência -->
+      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-card">
+        <div class="w-12 h-12 rounded-2xl bg-promo-50 dark:bg-slate-800 text-promo-600 dark:text-promo-400 flex items-center justify-center text-2xl mb-4">
+          🚗
+        </div>
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Estacionamento Gratuito</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+          Possuímos vagas exclusivas em frente à loja para os nossos clientes fazerem suas compras com tranquilidade e conforto.
+        </p>
+        <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+          <li class="flex items-center gap-2">
+            <span class="text-brand-600 dark:text-brand-400 font-bold">✓</span>
+            <span>Vagas para idosos e gestantes</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-brand-600 dark:text-brand-400 font-bold">✓</span>
+            <span>Acesso acessível para cadeirantes</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-brand-600 dark:text-brand-400 font-bold">✓</span>
+            <span>Bicicletário para ciclistas</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Card 3: Horários -->
+      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-card flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mb-4">
+            🕒
+          </div>
+          <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-2">Horário de Funcionamento</h3>
+          <div class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+            <div>
+              <strong class="text-slate-900 dark:text-white block text-xs uppercase tracking-wide">Segunda a Sábado</strong>
+              <span>{loja.horarioSemana}</span>
+            </div>
+            <div>
+              <strong class="text-slate-900 dark:text-white block text-xs uppercase tracking-wide">Domingos e Feriados</strong>
+              <span>{loja.horarioDomingo}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Aberto todos os dias da semana
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</BaseLayout>

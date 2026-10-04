@@ -1,0 +1,235 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import CategoryChips from '../../components/CategoryChips.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+const configEntry = await getEntry('configuracoes', 'loja');
+const loja = configEntry?.data ?? {
+  nomeLoja: 'Mercado Bom Preço',
+  whatsapp: '5511999998888',
+};
+
+const todosProdutos = await getCollection('produtos');
+
+// Categorias disponíveis
+const categorias = [
+  'Frutas e Verduras',
+  'Carnes e Aves',
+  'Laticínios',
+  'Mercearia',
+  'Limpeza',
+  'Bebidas',
+  'Padaria',
+  'Higiene'
+];
+
+// Pega parâmetros de URL se passados no servidor
+const categoriaUrl = Astro.url.searchParams.get('categoria') || '';
+const buscaUrl = Astro.url.searchParams.get('busca') || '';
+---
+
+<BaseLayout
+  title={`Catálogo de Produtos e Ofertas - ${loja.nomeLoja}`}
+  description="Consulte nossa lista completa de produtos frescos, hortifruti, carnes, laticínios e itens de mercearia pelos melhores preços da região."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Cabeçalho da Página de Produtos -->
+    <div class="mb-8">
+      <nav class="flex items-center text-xs text-slate-500 dark:text-slate-400 mb-2 gap-1.5">
+        <a href="/" class="hover:text-brand-700 dark:hover:text-brand-400">Início</a>
+        <span>&bull;</span>
+        <span class="text-slate-800 dark:text-slate-200 font-semibold">Catálogo de Produtos</span>
+      </nav>
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Catálogo de Produtos
+          </h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Veja preços atualizados, promoções vigentes e adicione direto ao seu carrinho com pagamento PIX.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 rounded-full shadow-sm">
+            Total de <strong class="text-brand-700 dark:text-emerald-400 font-bold" id="total-count">{todosProdutos.length}</strong> produtos
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Filtros e Busca Rápida -->
+    <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm mb-8 space-y-4">
+      
+      <!-- Input de busca interativa em tempo real -->
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <input
+            type="text"
+            id="filtro-busca"
+            value={buscaUrl}
+            placeholder="Buscar por nome do produto (ex: alcatra, leite, banana, arroz)..."
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+          />
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Seletor de Ordenação -->
+        <div class="sm:w-56 shrink-0">
+          <select
+            id="filtro-ordenacao"
+            class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-700 dark:text-slate-200 font-medium"
+          >
+            <option value="padrao">Ordenar: Destaques</option>
+            <option value="menor-preco">Preço: Menor para Maior</option>
+            <option value="maior-preco">Preço: Maior para Menor</option>
+            <option value="nome-asc">Nome: de A a Z</option>
+            <option value="promocao">Apenas em Promoção</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Barra de Categorias -->
+      <div class="pt-2 border-t border-slate-100">
+        <CategoryChips activeCategory={categoriaUrl} baseUrl="/produtos" />
+      </div>
+    </div>
+
+    <!-- Grid de Produtos com tags de dados para filtragem em tempo real -->
+    <div id="grid-produtos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {todosProdutos.map((prod) => {
+        const precoEfetivo = prod.data.precoPromocional && prod.data.precoPromocional < prod.data.preco
+          ? prod.data.precoPromocional
+          : prod.data.preco;
+        const temPromo = Boolean(prod.data.precoPromocional && prod.data.precoPromocional < prod.data.preco);
+
+        return (
+          <div
+            class="produto-item transition-all duration-300"
+            data-nome={prod.data.nome.toLowerCase()}
+            data-categoria={prod.data.categoria}
+            data-preco={precoEfetivo}
+            data-promo={temPromo ? 'true' : 'false'}
+            data-destaque={prod.data.destaque ? 'true' : 'false'}
+          >
+            <ProductCard
+              slug={prod.slug}
+              nome={prod.data.nome}
+              preco={prod.data.preco}
+              precoPromocional={prod.data.precoPromocional}
+              unidade={prod.data.unidade}
+              categoria={prod.data.categoria}
+              descricao={prod.data.descricao}
+              imagem={prod.data.imagem}
+              disponivel={prod.data.disponivel}
+              destaque={prod.data.destaque}
+              whatsapp={loja.whatsapp}
+            />
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Mensagem de Nenhum Produto Encontrado -->
+    <div
+      id="mensagem-vazia"
+      class="hidden py-16 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 my-8 shadow-sm"
+    >
+      <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-3xl mx-auto mb-4">
+        🔍
+      </div>
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">Nenhum produto encontrado</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1 mb-6">
+        Não encontramos nenhum item correspondente aos filtros de busca selecionados.
+      </p>
+      <a
+        href="/produtos"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl transition"
+      >
+        Limpar Filtros e Ver Todos
+      </a>
+    </div>
+
+  </div>
+</BaseLayout>
+
+<script>
+  // Script interativo de filtragem e ordenação no cliente
+  const inputBusca = document.getElementById('filtro-busca') as HTMLInputElement | null;
+  const selectOrdenacao = document.getElementById('filtro-ordenacao') as HTMLSelectElement | null;
+  const grid = document.getElementById('grid-produtos');
+  const emptyState = document.getElementById('mensagem-vazia');
+  const countDisplay = document.getElementById('total-count');
+
+  // Pega a categoria da URL atual se existir
+  const params = new URLSearchParams(window.location.search);
+  const categoriaAtiva = params.get('categoria') || '';
+
+  function filtrarEOrdenar() {
+    if (!grid) return;
+
+    const termo = inputBusca?.value.trim().toLowerCase() || '';
+    const ordenacao = selectOrdenacao?.value || 'padrao';
+    const items = Array.from(grid.querySelectorAll('.produto-item')) as HTMLElement[];
+
+    let visiveisCount = 0;
+
+    items.forEach((item) => {
+      const nome = item.getAttribute('data-nome') || '';
+      const categoria = item.getAttribute('data-categoria') || '';
+      const isPromo = item.getAttribute('data-promo') === 'true';
+
+      const bateBusca = !termo || nome.includes(termo);
+      const bateCategoria = !categoriaAtiva || categoria === categoriaAtiva;
+      const batePromo = ordenacao !== 'promocao' || isPromo;
+
+      if (bateBusca && bateCategoria && batePromo) {
+        item.style.display = '';
+        visiveisCount++;
+      } else {
+        item.style.display = 'none';
+      }
+    });
+
+    // Ordenação dos itens visíveis no DOM
+    const itemsOrdenados = items.filter((item) => item.style.display !== 'none');
+
+    itemsOrdenados.sort((a, b) => {
+      const precoA = parseFloat(a.getAttribute('data-preco') || '0');
+      const precoB = parseFloat(b.getAttribute('data-preco') || '0');
+      const nomeA = a.getAttribute('data-nome') || '';
+      const nomeB = b.getAttribute('data-nome') || '';
+
+      if (ordenacao === 'menor-preco') return precoA - precoB;
+      if (ordenacao === 'maior-preco') return precoB - precoA;
+      if (ordenacao === 'nome-asc') return nomeA.localeCompare(nomeB);
+      return 0; // padrão
+    });
+
+    itemsOrdenados.forEach((el) => grid.appendChild(el));
+
+    // Atualiza contagem e mensagem vazia
+    if (countDisplay) {
+      countDisplay.textContent = String(visiveisCount);
+    }
+
+    if (emptyState) {
+      if (visiveisCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+  }
+
+  inputBusca?.addEventListener('input', filtrarEOrdenar);
+  selectOrdenacao?.addEventListener('change', filtrarEOrdenar);
+
+  // Executa uma vez no carregamento para aplicar filtros da URL
+  filtrarEOrdenar();
+</script>

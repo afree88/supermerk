@@ -1,0 +1,267 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PromoBanner from '../components/PromoBanner.astro';
+import ProductCard from '../components/ProductCard.astro';
+import CategoryChips from '../components/CategoryChips.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+// Busca dados da loja
+const configEntry = await getEntry('configuracoes', 'loja');
+const loja = configEntry?.data ?? {
+  nomeLoja: 'Mercado Bom Preço',
+  slogan: 'Economia e qualidade pertinho de você!',
+  telefone: '(11) 3456-7890',
+  whatsapp: '5511999998888',
+  endereco: 'Rua das Flores, 123 - Centro',
+  cidadeBairro: 'São Paulo, SP',
+  horarioSemana: '07h30 às 20h30',
+  horarioDomingo: '08h00 às 13h30',
+  bannerTitulo: 'Preço Baixo de Verdade para Sua Família',
+  bannerSubtitulo: 'Frutas fresquinhas colhidas no dia, carnes nobres e marcas de confiança pelo menor preço da região.',
+  chavePix: '11999998888',
+  tipoChavePix: 'Celular / WhatsApp',
+  titularPix: 'Mercado Bom Preço Ltda',
+};
+
+// Busca todos os produtos
+const todosProdutos = await getCollection('produtos');
+
+// Filtra produtos em promoção
+const produtosEmPromocao = todosProdutos.filter(
+  (p) => p.data.precoPromocional && p.data.precoPromocional < p.data.preco && p.data.disponivel
+);
+
+// Filtra produtos em destaque
+const produtosDestaque = todosProdutos.filter((p) => p.data.destaque && p.data.disponivel);
+
+// Categorias com imagens de capa para a seção visual
+const categoriasCards = [
+  { nome: 'Frutas e Verduras', desc: 'Frescor direto do produtor', img: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80' },
+  { nome: 'Carnes e Aves', desc: 'Açougue inspecionado e cortes na hora', img: 'https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=400&q=80' },
+  { nome: 'Laticínios', desc: 'Leites, queijos e iogurtes', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=400&q=80' },
+  { nome: 'Mercearia', desc: 'Arroz, feijão, café e despensa', img: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80' },
+  { nome: 'Padaria', desc: 'Pão quente saindo do forno', img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80' },
+  { nome: 'Bebidas', desc: 'Sucos integrais, refrigerantes e águas', img: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=400&q=80' },
+];
+---
+
+<BaseLayout
+  title={`${loja.nomeLoja} - Ofertas da Semana e Preço Baixo`}
+  description={loja.slogan}
+>
+  <!-- 1. Banner Principal de Promoções com Alto Contraste -->
+  <PromoBanner loja={loja} />
+
+  <!-- 2. Filtro Rápido de Categorias -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <span>Categorias Populares</span>
+      </h2>
+      <a href="/produtos" class="text-xs sm:text-sm font-semibold text-brand-700 dark:text-brand-400 hover:underline">
+        Ver catálogo completo &rarr;
+      </a>
+    </div>
+    <CategoryChips baseUrl="/produtos" />
+  </section>
+
+  <!-- 3. Vitrine de Ofertas da Semana (com desconto ativo) -->
+  {produtosEmPromocao.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-8">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-promo-600 dark:text-promo-400 bg-promo-50 dark:bg-promo-950/70 border border-promo-200 dark:border-promo-800/80 px-3 py-1 rounded-full">
+            🔥 Economia Garantida
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-2">
+            Ofertas Imperdíveis da Semana
+          </h2>
+          <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">
+            Preços especiais com descontos exclusivos válidos enquanto durarem nossos estoques.
+          </p>
+        </div>
+        <a
+          href="/produtos"
+          class="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold text-brand-700 dark:text-brand-400 hover:text-brand-800"
+        >
+          <span>Conferir todas as {todosProdutos.length} ofertas</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {produtosEmPromocao.slice(0, 8).map((prod) => (
+          <ProductCard
+            slug={prod.slug}
+            nome={prod.data.nome}
+            preco={prod.data.preco}
+            precoPromocional={prod.data.precoPromocional}
+            unidade={prod.data.unidade}
+            categoria={prod.data.categoria}
+            descricao={prod.data.descricao}
+            imagem={prod.data.imagem}
+            disponivel={prod.data.disponivel}
+            destaque={prod.data.destaque}
+            whatsapp={loja.whatsapp}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- 4. Departamentos em Destaque (Cards Visuais com Imagem) -->
+  <section class="bg-slate-100/70 dark:bg-slate-900/60 py-14 my-8 border-y border-slate-200/80 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/60 dark:border-brand-800/80 px-3 py-1 rounded-full">
+          Conheça Nossa Loja
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-3">
+          Tudo o Que Sua Casa Precisa em Um Só Lugar
+        </h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+          Do hortifruti com produtos frescos da horta ao pão quentinho da padaria.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {categoriasCards.map((cat) => (
+          <a
+            href={`/produtos?categoria=${encodeURIComponent(cat.nome)}`}
+            class="group relative h-48 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 block"
+          >
+            <img
+              src={cat.img}
+              alt={cat.nome}
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent"></div>
+            <div class="absolute bottom-3 left-3 right-3 text-white">
+              <h3 class="font-bold text-sm leading-tight group-hover:text-brand-300 transition-colors">
+                {cat.nome}
+              </h3>
+              <p class="text-[10px] text-slate-300 line-clamp-1 mt-0.5">
+                {cat.desc}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Produtos em Destaque Geral -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400">Mais Procurados</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          Destaques Selecionados
+        </h2>
+      </div>
+      <a
+        href="/produtos"
+        class="text-sm font-bold text-brand-700 dark:text-brand-400 hover:text-brand-800"
+      >
+        Ver todos &rarr;
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {produtosDestaque.map((prod) => (
+        <ProductCard
+          slug={prod.slug}
+          nome={prod.data.nome}
+          preco={prod.data.preco}
+          precoPromocional={prod.data.precoPromocional}
+          unidade={prod.data.unidade}
+          categoria={prod.data.categoria}
+          descricao={prod.data.descricao}
+          imagem={prod.data.imagem}
+          disponivel={prod.data.disponivel}
+          destaque={prod.data.destaque}
+          whatsapp={loja.whatsapp}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- 6. Seção de Confiança / Benefícios do Mercado de Bairro -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-gradient-to-br from-brand-950 to-brand-900 text-white rounded-3xl p-8 sm:p-12 shadow-xl border border-brand-800/60">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+        <div class="flex flex-col items-center md:items-start">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-4">
+            🥦
+          </div>
+          <h3 class="text-lg font-bold">Hortifruti Direto do Produtor</h3>
+          <p class="text-xs text-brand-100/90 mt-2 leading-relaxed">
+            Abastecemos nossas bancas de verduras e legumes diariamente para garantir o máximo de sabor e nutrientes.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center md:items-start">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-4">
+            🥩
+          </div>
+          <h3 class="text-lg font-bold">Açougue com Corte Sob Medida</h3>
+          <p class="text-xs text-brand-100/90 mt-2 leading-relaxed">
+            Carnes nobres com procedência de frigoríficos inspecionados. Nossos açougueiros preparam o corte do jeito que você gosta.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center md:items-start">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-4">
+            💳
+          </div>
+          <h3 class="text-lg font-bold">Pague com PIX ou no WhatsApp</h3>
+          <p class="text-xs text-brand-100/90 mt-2 leading-relaxed">
+            Monte seu carrinho no site e pague na hora com PIX, ou mande sua listinha no WhatsApp para entrega a domicílio.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Seção Informativa: Horário e Localização Rápida -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-12">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200/90 dark:border-slate-800 shadow-card flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div class="space-y-3">
+        <span class="inline-block text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/50 dark:border-brand-800/80 px-3 py-1 rounded-full">
+          Visite Nossa Loja Física
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          Estamos de portas abertas para te receber!
+        </h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400">
+          {loja.endereco} &bull; {loja.cidadeBairro}
+        </p>
+        <div class="flex flex-wrap gap-4 pt-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+          <span class="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+            📅 {loja.horarioSemana}
+          </span>
+          <span class="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+            ☀️ {loja.horarioDomingo}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3 w-full lg:w-auto">
+        <a
+          href="/localizacao"
+          class="flex-1 sm:flex-none text-center px-6 py-3.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm shadow transition"
+        >
+          Ver Rota no Mapa
+        </a>
+        <a
+          href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de fazer uma encomenda.')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex-1 sm:flex-none text-center px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow transition"
+        >
+          Falar no WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

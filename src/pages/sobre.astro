@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const configEntry = await getEntry('configuracoes', 'loja');
+const loja = configEntry?.data ?? {
+  nomeLoja: 'Mercado Bom Preço',
+  slogan: 'Economia e qualidade pertinho de você!',
+  telefone: '(11) 3456-7890',
+  whatsapp: '5511999998888',
+  endereco: 'Rua das Flores, 123 - Centro',
+  cidadeBairro: 'São Paulo, SP',
+};
+---
+
+<BaseLayout
+  title={`Sobre Nós - ${loja.nomeLoja}`}
+  description="Conheça a história e os valores do Mercado Bom Preço. Há anos servindo a nossa vizinhança com carinho, economia e qualidade."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    
+    <!-- Hero da página Sobre -->
+    <div class="max-w-3xl mx-auto text-center mb-16">
+      <span class="text-xs uppercase font-extrabold tracking-wider text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/60 dark:border-brand-800/80 px-3.5 py-1.5 rounded-full inline-block mb-3">
+        Nossa História
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+        O Mercado que Cresceu Cuidando da Sua Família
+      </h1>
+      <p class="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+        Nascemos como uma pequena mercearia de bairro e nos tornamos o ponto de encontro de quem valoriza produtos de qualidade pelo preço mais justo.
+      </p>
+    </div>
+
+    <!-- Imagem em Destaque e Linha do Tempo -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+      <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800">
+        <img
+          src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80"
+          alt="Corredores abastecidos do Mercado Bom Preço"
+          class="w-full h-[420px] object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6 right-6 text-white">
+          <span class="text-xs uppercase tracking-wider font-semibold text-brand-300">Tradição & Confiança</span>
+          <h3 class="text-xl font-bold">Atendimento que chama pelo nome</h3>
+        </div>
+      </div>
+
+      <div class="space-y-6 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-snug">
+          Mais que um supermercado, parte da sua rotina diária
+        </h2>
+        <p>
+          O <strong>{loja.nomeLoja}</strong> foi fundado com um propósito simples e firme: oferecer à comunidade produtos frescos e de primeira qualidade sem cobrar preços abusivos.
+        </p>
+        <p>
+          Sabemos o valor do dinheiro suado de cada trabalhador. Por isso, negociamos diariamente com os melhores produtores da região e grandes distribuidores para trazer ofertas reais, daquelas que fazem a diferença no fim do mês.
+        </p>
+        <p>
+          Aqui você não é apenas um número de cupom fiscal: nossa equipe conhece cada cliente, sabe qual o corte de carne que sua família prefere e ajuda você a escolher as frutas mais doces da banca.
+        </p>
+      </div>
+    </div>
+
+    <!-- Nossos Pilares e Diferenciais -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-card p-8 sm:p-12 mb-16">
+      <div class="text-center max-w-xl mx-auto mb-10">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Nossos Valores Fundamentais</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">O que nos move todos os dias a abrir as portas cedinho com um sorriso.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/80">
+          <div class="w-12 h-12 rounded-xl bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-400 flex items-center justify-center text-2xl mb-4">
+            🌱
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Frescor sem Negociação</h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            Nossos legumes e frutas chegam nas primeiras horas da manhã. Se não for fresco e selecionado, não vai para a nossa banca.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/80">
+          <div class="w-12 h-12 rounded-xl bg-promo-100 dark:bg-promo-950 text-promo-700 dark:text-promo-400 flex items-center justify-center text-2xl mb-4">
+            🏷️
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Preço Justo e Transparente</h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            Promoções de verdade que aliviam o bolso familiar. Não inventamos preços para dar falsos descontos.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/80">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-2xl mb-4">
+            🤝
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Respeito e Acolhimento</h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            Ambiente limpo, organizado, com corredores amplos e colaboradores prontos para te ajudar em tudo o que precisar.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chamada para Ação -->
+    <div class="bg-gradient-to-r from-brand-950 to-brand-900 border border-brand-800/60 rounded-3xl p-8 sm:p-12 text-white text-center">
+      <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Venha tomar um café conosco!</h2>
+      <p class="text-brand-100 text-sm sm:text-base max-w-xl mx-auto mb-6">
+        Nossa padaria assa fornadas quentinhas a todo momento. Passe no {loja.nomeLoja} hoje mesmo ou monte seu carrinho no site com PIX.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a
+          href="/localizacao"
+          class="px-6 py-3 bg-white text-brand-950 font-bold text-sm rounded-xl hover:bg-brand-50 transition"
+        >
+          Como Chegar na Loja
+        </a>
+        <a
+          href="/produtos"
+          class="px-6 py-3 bg-promo-500 hover:bg-promo-600 text-white font-bold text-sm rounded-xl transition"
+        >
+          Ver Produtos e Ofertas
+        </a>
+      </div>
+    </div>
+
+  </div>
+</BaseLayout>

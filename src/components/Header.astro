@@ -1,0 +1,295 @@
+---
+interface Props {
+  loja: {
+    nomeLoja: string;
+    slogan?: string;
+    telefone: string;
+    whatsapp: string;
+    endereco: string;
+    horarioSemana: string;
+    bannerAviso?: string | null;
+  };
+}
+
+const { loja } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { name: 'Início', href: '/' },
+  { name: 'Catálogo de Produtos', href: '/produtos' },
+  { name: 'Sobre Nós', href: '/sobre' },
+  { name: 'Localização', href: '/localizacao' },
+  { name: 'Contato', href: '/contato' },
+];
+---
+
+<header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm transition-colors duration-200">
+  <!-- Top bar com avisos e horários -->
+  <div class="bg-brand-950 dark:bg-black text-white text-xs py-2 px-4 border-b border-brand-900/40">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-4">
+        {loja.bannerAviso && (
+          <span class="font-bold bg-brand-800/80 px-2.5 py-0.5 rounded-full text-brand-100 flex items-center gap-1.5 shadow-sm">
+            <span>✨</span> {loja.bannerAviso}
+          </span>
+        )}
+      </div>
+      <div class="flex items-center gap-4 text-slate-300">
+        <span class="hidden md:inline-flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          {loja.horarioSemana}
+        </span>
+        <span class="inline-flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+          {loja.telefone}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cabeçalho Principal -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2.5 group shrink-0">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center text-white shadow-md shadow-brand-600/20 group-hover:scale-105 transition-transform">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      <div>
+        <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight block leading-tight">
+          {loja.nomeLoja.split(' ')[0]} <span class="text-brand-600 dark:text-brand-400">{loja.nomeLoja.split(' ').slice(1).join(' ')}</span>
+        </span>
+        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold tracking-wide uppercase">Supermercado & Padaria</span>
+      </div>
+    </a>
+
+    <!-- Barra de Busca Rápida (Desktop e Tablet) -->
+    <form action="/produtos" method="get" class="hidden md:flex flex-1 max-w-md mx-4">
+      <div class="relative w-full">
+        <input
+          type="text"
+          name="busca"
+          placeholder="O que você está procurando hoje? (ex: leite, arroz, carne)"
+          class="w-full pl-10 pr-4 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
+        />
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+    </form>
+
+    <!-- Botões de Ação do Header -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      
+      <!-- Botão Alternador Tema Dark / Light -->
+      <button
+        id="theme-toggle-btn"
+        type="button"
+        class="p-2 sm:p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition"
+        aria-label="Alternar tema claro/escuro"
+        title="Alternar tema claro/escuro"
+      >
+        <!-- Ícone Sol (quando estiver escuro) -->
+        <svg id="theme-sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <!-- Ícone Lua (quando estiver claro) -->
+        <svg id="theme-moon-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+      </button>
+
+      <!-- Botão Carrinho de Compras -->
+      <button
+        id="cart-header-btn"
+        type="button"
+        class="relative flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-50 dark:bg-slate-800 border border-brand-200 dark:border-slate-700 text-brand-800 dark:text-brand-300 font-bold text-xs sm:text-sm hover:bg-brand-100 dark:hover:bg-slate-700 transition"
+        aria-label="Abrir carrinho"
+      >
+        <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+        <span class="hidden sm:inline">Carrinho</span>
+        <span
+          id="cart-header-badge"
+          class="hidden px-1.5 py-0.5 text-[11px] font-black rounded-full bg-promo-500 text-white min-w-[20px] text-center"
+        >
+          0
+        </span>
+      </button>
+
+      <!-- WhatsApp Rápido -->
+      <a
+        href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de consultar os produtos do Mercado Bom Preço.')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hidden lg:inline-flex items-center gap-2 px-3.5 py-2 text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900 transition"
+      >
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Peça no WhatsApp</span>
+      </a>
+
+      <!-- Botão Hambúrguer Mobile -->
+      <button
+        id="mobile-menu-button"
+        type="button"
+        class="md:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none"
+        aria-label="Abrir menu"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Barra de Busca Mobile -->
+  <div class="md:hidden px-4 pb-3">
+    <form action="/produtos" method="get">
+      <div class="relative w-full">
+        <input
+          type="text"
+          name="busca"
+          placeholder="Buscar produtos, marcas, ofertas..."
+          class="w-full pl-9 pr-4 py-2 text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        />
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Barra de Navegação Desktop -->
+  <nav class="hidden md:block bg-slate-50 dark:bg-slate-950/60 border-t border-slate-200/80 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-1 py-1.5">
+        {navLinks.map((link) => {
+          const isActive = currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
+          return (
+            <a
+              href={link.href}
+              class={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                isActive
+                  ? 'bg-brand-600 text-white shadow-sm'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-brand-700 dark:hover:text-brand-400 hover:bg-slate-200/60 dark:hover:bg-slate-800'
+              }`}
+            >
+              {link.name}
+            </a>
+          );
+        })}
+
+        <a
+          href="/produtos?categoria=Frutas+e+Verduras"
+          class="ml-auto inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-promo-700 dark:text-promo-300 bg-promo-50 dark:bg-promo-950/60 border border-promo-200 dark:border-promo-800 rounded-full hover:bg-promo-100 transition"
+        >
+          <span>🔥</span> Ofertas da Semana
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Menu Mobile Desdobrável -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-1">
+    {navLinks.map((link) => {
+      const isActive = currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href));
+      return (
+        <a
+          href={link.href}
+          class={`block px-3 py-2 rounded-lg text-base font-medium ${
+            isActive
+              ? 'bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 font-bold'
+              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          {link.name}
+        </a>
+      );
+    })}
+    <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+      <a
+        href="/admin"
+        class="inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+      >
+        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        Acesso do Gerente (CMS)
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile Menu
+  const menuBtn = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+  });
+
+  // Dark Mode Toggle Logic
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  const sunIcon = document.getElementById('theme-sun-icon');
+  const moonIcon = document.getElementById('theme-moon-icon');
+
+  function updateThemeUI() {
+    const isDark = document.documentElement.classList.contains('dark');
+    if (isDark) {
+      sunIcon?.classList.remove('hidden');
+      moonIcon?.classList.add('hidden');
+    } else {
+      sunIcon?.classList.add('hidden');
+      moonIcon?.classList.remove('hidden');
+    }
+  }
+
+  themeToggleBtn?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    }
+    updateThemeUI();
+  });
+
+  // Carrinho Header
+  const cartHeaderBtn = document.getElementById('cart-header-btn');
+  const cartHeaderBadge = document.getElementById('cart-header-badge');
+
+  function updateHeaderBadge() {
+    try {
+      const raw = localStorage.getItem('bompreco_cart_v1');
+      const cart = raw ? JSON.parse(raw) : [];
+      const totalQtd = cart.reduce((acc: number, item: any) => acc + (item.quantidade || 0), 0);
+
+      if (cartHeaderBadge) {
+        if (totalQtd > 0) {
+          cartHeaderBadge.textContent = String(totalQtd);
+          cartHeaderBadge.classList.remove('hidden');
+        } else {
+          cartHeaderBadge.classList.add('hidden');
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  cartHeaderBtn?.addEventListener('click', () => {
+    if (window.carrinhoMercado) {
+      window.carrinhoMercado.abrir();
+    }
+  });
+
+  window.addEventListener('cart:updated', updateHeaderBadge);
+  updateHeaderBadge();
+  updateThemeUI();
+</script>

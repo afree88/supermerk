@@ -1,0 +1,301 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const produtos = await getCollection('produtos');
+  return produtos.map((prod) => ({
+    params: { slug: prod.slug },
+    props: { produto: prod },
+  }));
+}
+
+const { produto } = Astro.props;
+const { Content } = await produto.render();
+
+// Busca dados da loja para WhatsApp e telefones
+const configEntry = await getEntry('configuracoes', 'loja');
+const loja = configEntry?.data ?? {
+  nomeLoja: 'Mercado Bom Preço',
+  whatsapp: '5511999998888',
+  telefone: '(11) 3456-7890',
+  chavePix: '11999998888',
+  tipoChavePix: 'Celular / WhatsApp',
+  titularPix: 'Mercado Bom Preço Ltda',
+};
+
+// Formatação brasileira de moeda
+const formatCurrency = (val: number) => {
+  return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
+
+const temPromocao = produto.data.precoPromocional && produto.data.precoPromocional < produto.data.preco;
+const precoFinal = temPromocao ? produto.data.precoPromocional! : produto.data.preco;
+const percentualDesconto = temPromocao
+  ? Math.round(((produto.data.preco - produto.data.precoPromocional!) / produto.data.preco) * 100)
+  : 0;
+
+// Mensagem para o WhatsApp
+const mensagemWhatsApp = `Olá! Vi o produto *${produto.data.nome}* no site por ${formatCurrency(precoFinal)} / ${produto.data.unidade} e gostaria de fazer o pedido!`;
+
+// Busca produtos relacionados da mesma categoria
+const todosProdutos = await getCollection('produtos');
+const produtosRelacionados = todosProdutos
+  .filter((p) => p.data.categoria === produto.data.categoria && p.slug !== produto.slug)
+  .slice(0, 4);
+---
+
+<BaseLayout
+  title={`${produto.data.nome} - ${loja.nomeLoja}`}
+  description={produto.data.descricao}
+  image={produto.data.imagem}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- Breadcrumb de Navegação -->
+    <nav class="flex items-center text-xs text-slate-500 dark:text-slate-400 mb-6 gap-2">
+      <a href="/" class="hover:text-brand-700 dark:hover:text-brand-400">Início</a>
+      <span>&bull;</span>
+      <a href="/produtos" class="hover:text-brand-700 dark:hover:text-brand-400">Produtos</a>
+      <span>&bull;</span>
+      <a
+        href={`/produtos?categoria=${encodeURIComponent(produto.data.categoria)}`}
+        class="hover:text-brand-700 dark:hover:text-brand-400 font-medium text-slate-700 dark:text-slate-300"
+      >
+        {produto.data.categoria}
+      </a>
+      <span>&bull;</span>
+      <span class="text-slate-900 dark:text-white font-semibold truncate">{produto.data.nome}</span>
+    </nav>
+
+    <!-- Card Principal do Produto -->
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-card p-6 sm:p-10 mb-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        
+        <!-- Foto Ampliada do Produto -->
+        <div class="relative rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm aspect-square max-h-[460px] w-full">
+          <img
+            src={produto.data.imagem}
+            alt={produto.data.nome}
+            class="w-full h-full object-cover object-center"
+          />
+          
+          <!-- Badges de Status -->
+          <div class="absolute top-4 left-4 flex flex-col gap-2">
+            {temPromocao && produto.data.disponivel && (
+              <span class="bg-gradient-to-r from-red-600 to-promo-600 text-white font-extrabold text-xs px-3 py-1.5 rounded-full shadow-lg uppercase tracking-wider">
+                {percentualDesconto}% DE DESCONTO
+              </span>
+            )}
+            {produto.data.destaque && (
+              <span class="bg-brand-600 text-white font-bold text-xs px-3 py-1 rounded-full shadow">
+                Item em Destaque
+              </span>
+            )}
+          </div>
+
+          {!produto.data.disponivel && (
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center">
+              <span class="bg-white text-slate-900 font-black text-sm px-4 py-2 rounded-xl uppercase tracking-widest shadow-xl">
+                Produto Temporariamente Esgotado
+              </span>
+            </div>
+          )}
+        </div>
+
+        <!-- Informações e Ações do Produto -->
+        <div class="flex flex-col justify-between h-full">
+          <div>
+            <!-- Categoria e Disponibilidade -->
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <a
+                href={`/produtos?categoria=${encodeURIComponent(produto.data.categoria)}`}
+                class="text-xs uppercase tracking-wider font-bold text-brand-700 dark:text-emerald-400 bg-brand-50 dark:bg-brand-950/60 px-3 py-1 rounded-full border border-brand-200/50 dark:border-brand-800/60"
+              >
+                {produto.data.categoria}
+              </a>
+
+              {produto.data.disponivel ? (
+                <span class="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Disponível em estoque
+                </span>
+              ) : (
+                <span class="text-xs font-semibold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2.5 py-1 rounded-full">
+                  Fora de estoque
+                </span>
+              )}
+            </div>
+
+            <!-- Título do Produto -->
+            <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
+              {produto.data.nome}
+            </h1>
+
+            <!-- Preço em Destaque -->
+            <div class="mt-6 p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+              <div class="flex items-baseline gap-3">
+                {temPromocao ? (
+                  <div>
+                    <span class="text-sm text-slate-400 dark:text-slate-500 line-through block">
+                      De {formatCurrency(produto.data.preco)}
+                    </span>
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-3xl sm:text-4xl font-black text-promo-600 dark:text-promo-400">
+                        {formatCurrency(produto.data.precoPromocional!)}
+                      </span>
+                      <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">
+                        / {produto.data.unidade}
+                      </span>
+                    </div>
+                    <span class="inline-block mt-1 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                      Você economiza {formatCurrency(produto.data.preco - produto.data.precoPromocional!)} nesta unidade!
+                    </span>
+                  </div>
+                ) : (
+                  <div class="flex items-baseline gap-1.5">
+                    <span class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                      {formatCurrency(produto.data.preco)}
+                    </span>
+                    <span class="text-sm font-semibold text-slate-600 dark:text-slate-400">
+                      / {produto.data.unidade}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <!-- Descrição Curta -->
+            <div class="mt-6">
+              <h3 class="text-xs uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider mb-2">Sobre este produto</h3>
+              <p class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+                {produto.data.descricao}
+              </p>
+            </div>
+
+            <!-- Detalhes Extras do Markdown (se houver) -->
+            <div class="mt-4 prose prose-sm dark:prose-invert text-slate-600 dark:text-slate-400">
+              <Content />
+            </div>
+          </div>
+
+          <!-- Ação de Compra / Carrinho / WhatsApp -->
+          <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-3">
+            {produto.data.disponivel ? (
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Botão Adicionar ao Carrinho -->
+                <button
+                  id="btn-detalhes-add-cart"
+                  type="button"
+                  class="w-full inline-flex items-center justify-center gap-2.5 bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-sm sm:text-base px-6 py-4 rounded-2xl shadow-lg shadow-brand-600/25 transition-all"
+                  data-slug={produto.slug}
+                  data-nome={produto.data.nome}
+                  data-preco={precoFinal}
+                  data-unidade={produto.data.unidade}
+                  data-imagem={produto.data.imagem}
+                >
+                  <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  <span id="detalhes-btn-text">Adicionar ao Carrinho (PIX)</span>
+                </button>
+
+                <!-- Botão Pedir Direto no WhatsApp -->
+                <a
+                  href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent(mensagemWhatsApp)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm sm:text-base px-6 py-4 rounded-2xl shadow-md transition-all"
+                >
+                  <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  <span>Pedir no WhatsApp</span>
+                </a>
+              </div>
+            ) : (
+              <button
+                disabled
+                class="w-full py-4 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-500 font-bold cursor-not-allowed text-center"
+              >
+                Produto Indisponível no Momento
+              </button>
+            )}
+
+            <a
+              href="/produtos"
+              class="w-full text-center py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
+            >
+              &larr; Voltar ao Catálogo Completo
+            </a>
+          </div>
+
+          <!-- Informações de entrega rápida -->
+          <div class="mt-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span>Retirada imediata no balcão ou entrega rápida em todo o bairro.</span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Seção de Produtos Relacionados -->
+    {produtosRelacionados.length > 0 && (
+      <section class="mt-14">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+          Outros produtos em {produto.data.categoria}
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {produtosRelacionados.map((rel) => (
+            <ProductCard
+              slug={rel.slug}
+              nome={rel.data.nome}
+              preco={rel.data.preco}
+              precoPromocional={rel.data.precoPromocional}
+              unidade={rel.data.unidade}
+              categoria={rel.data.categoria}
+              descricao={rel.data.descricao}
+              imagem={rel.data.imagem}
+              disponivel={rel.data.disponivel}
+              destaque={rel.data.destaque}
+              whatsapp={loja.whatsapp}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+  </div>
+</BaseLayout>
+
+<script>
+  const btnAddCart = document.getElementById('btn-detalhes-add-cart');
+  const btnText = document.getElementById('detalhes-btn-text');
+
+  btnAddCart?.addEventListener('click', (e) => {
+    const target = e.currentTarget as HTMLButtonElement;
+    const slug = target.getAttribute('data-slug') || '';
+    const nome = target.getAttribute('data-nome') || '';
+    const preco = parseFloat(target.getAttribute('data-preco') || '0');
+    const unidade = target.getAttribute('data-unidade') || 'un';
+    const imagem = target.getAttribute('data-imagem') || '';
+
+    if (window.carrinhoMercado) {
+      window.carrinhoMercado.adicionar({
+        slug,
+        nome,
+        preco,
+        unidade,
+        imagem,
+      });
+
+      if (btnText) {
+        btnText.textContent = 'Adicionado ao Carrinho! ✓';
+        setTimeout(() => {
+          btnText.textContent = 'Adicionar ao Carrinho (PIX)';
+        }, 2000);
+      }
+    }
+  });
+</script>
