@@ -167,37 +167,50 @@ const precoFinal = temPromocao ? precoPromocional : preco;
 </div>
 
 <script>
-  // Evento de adicionar ao carrinho
-  document.querySelectorAll('.btn-add-carrinho').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLButtonElement;
-      const slug = target.getAttribute('data-slug') || '';
-      const nome = target.getAttribute('data-nome') || '';
-      const preco = parseFloat(target.getAttribute('data-preco') || '0');
-      const unidade = target.getAttribute('data-unidade') || 'un';
-      const imagem = target.getAttribute('data-imagem') || '';
+  // Usa delegação de eventos no document para garantir que funcione
+  // mesmo quando o carrinhoMercado ainda não foi inicializado
+  function handleAddToCart(btn: HTMLButtonElement) {
+    const slug = btn.getAttribute('data-slug') || '';
+    const nome = btn.getAttribute('data-nome') || '';
+    const preco = parseFloat(btn.getAttribute('data-preco') || '0');
+    const unidade = btn.getAttribute('data-unidade') || 'un';
+    const imagem = btn.getAttribute('data-imagem') || '';
 
-      if (window.carrinhoMercado) {
-        window.carrinhoMercado.adicionar({
-          slug,
-          nome,
-          preco,
-          unidade,
-          imagem,
-        });
+    if (window.carrinhoMercado) {
+      window.carrinhoMercado.adicionar({
+        slug,
+        nome,
+        preco,
+        unidade,
+        imagem,
+      });
 
-        // Feedback visual
-        const textSpan = target.querySelector('.btn-text');
-        if (textSpan) {
-          const originalText = textSpan.textContent;
-          textSpan.textContent = 'Adicionado! ✓';
-          target.classList.add('bg-emerald-600');
-          setTimeout(() => {
-            textSpan.textContent = originalText;
-            target.classList.remove('bg-emerald-600');
-          }, 1500);
-        }
+      // Feedback visual
+      const textSpan = btn.querySelector('.btn-text');
+      if (textSpan) {
+        const originalText = textSpan.textContent;
+        textSpan.textContent = 'Adicionado! ✓';
+        btn.classList.remove('bg-brand-600', 'hover:bg-brand-500');
+        btn.classList.add('bg-emerald-600');
+        setTimeout(() => {
+          if (textSpan) textSpan.textContent = originalText;
+          btn.classList.add('bg-brand-600', 'hover:bg-brand-500');
+          btn.classList.remove('bg-emerald-600');
+        }, 1500);
       }
-    });
+    } else {
+      // Carrinho ainda não carregou, tenta novamente em breve
+      console.warn('[Carrinho] carrinhoMercado não disponível ainda, tentando novamente...');
+      setTimeout(() => handleAddToCart(btn), 300);
+    }
+  }
+
+  // Delegação de eventos: captura cliques em qualquer botão .btn-add-carrinho
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as Element).closest('.btn-add-carrinho') as HTMLButtonElement | null;
+    if (btn) {
+      e.preventDefault();
+      handleAddToCart(btn);
+    }
   });
 </script>

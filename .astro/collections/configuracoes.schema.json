@@ -1,0 +1,94 @@
+{
+  "$ref": "#/definitions/configuracoes",
+  "definitions": {
+    "configuracoes": {
+      "type": "object",
+      "properties": {
+        "nomeLoja": {
+          "type": "string",
+          "default": "Mercado Bom Preço"
+        },
+        "slogan": {
+          "type": "string",
+          "default": "Economia e qualidade pertinho de você!"
+        },
+        "telefone": {
+          "type": "string"
+        },
+        "whatsapp": {
+          "type": "string"
+        },
+        "endereco": {
+          "type": "string"
+        },
+        "cidadeBairro": {
+          "type": "string"
+        },
+        "googleMapsUrl": {
+          "type": "string"
+        },
+        "googleMapsEmbed": {
+          "type": "string"
+        },
+        "horarioSemana": {
+          "type": "string"
+        },
+        "horarioDomingo": {
+          "type": "string"
+        },
+        "bannerAviso": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "not": {}
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bannerTitulo": {
+          "type": "string"
+        },
+        "bannerSubtitulo": {
+          "type": "string"
+        },
+        "chavePix": {
+          "type": "string",
+          "default": "11999998888"
+        },
+        "tipoChavePix": {
+          "type": "string",
+          "default": "Celular / Telefone"
+        },
+        "titularPix": {
+          "type": "string",
+          "default": "Mercado Bom Preço Ltda"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "telefone",
+        "whatsapp",
+        "endereco",
+        "cidadeBairro",
+        "googleMapsUrl",
+        "googleMapsEmbed",
+        "horarioSemana",
+        "horarioDomingo",
+        "bannerTitulo",
+        "bannerSubtitulo"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

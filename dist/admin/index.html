@@ -1,1 +1,25 @@
-<!doctype html><title>Redirecting to: https://mercadobompreco.netlify.app/admin/index.html</title><meta http-equiv="refresh" content="0;url=https://mercadobompreco.netlify.app/admin/index.html"><meta name="robots" content="noindex"><link rel="canonical" href="https://mercadobompreco.netlify.app/admin/index.html"><body>	<a href="https://mercadobompreco.netlify.app/admin/index.html">Redirecting from <code>/admin/</code> to <code>https://mercadobompreco.netlify.app/admin/index.html</code></a></body>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Painel Administrativo | Mercado Bom Preço</title>
+  <!-- Decap CMS: Compatível nativamente com Netlify Identity e Git Gateway -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+  <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
+  <script>
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", (user) => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => {
+            document.location.reload();
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>

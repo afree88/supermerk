@@ -46,6 +46,9 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
+    <!-- Netlify Identity Widget para Autenticação do CMS / Admin -->
+    <script is:inline src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
     <!-- Script Inline para evitar Flash no Dark Mode -->
     <script is:inline>
       const savedTheme = localStorage.getItem('theme');
@@ -85,6 +88,9 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <!-- Header com navegação, tema dark e botão do carrinho -->
     <Header loja={loja} />
 
+    <!-- Drawer do Carrinho com Pagamento PIX (deve vir antes do main para inicializar window.carrinhoMercado) -->
+    <CartDrawer loja={loja} />
+
     <!-- Conteúdo principal da página -->
     <main class="flex-1">
       <slot />
@@ -92,9 +98,6 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 
     <!-- Rodapé -->
     <Footer loja={loja} />
-
-    <!-- Drawer do Carrinho com Pagamento PIX -->
-    <CartDrawer loja={loja} />
 
     <!-- Botões Flutuantes (WhatsApp e Carrinho Rápido) -->
     <div class="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">
@@ -167,6 +170,19 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 
       window.addEventListener('cart:updated', updateFloatingBadge);
       updateFloatingBadge();
+    </script>
+
+    <!-- Redirecionamento pós-login no Netlify Identity para o Painel Admin -->
+    <script is:inline>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", (user) => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
     </script>
   </body>
 </html>
