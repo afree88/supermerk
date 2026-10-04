@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: afree88/supermerk
   branch: main
 
 # Ativa o backend local para desenvolvimento e testes

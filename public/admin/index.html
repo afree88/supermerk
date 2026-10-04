@@ -5,21 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>Painel Administrativo | Mercado Bom Preço</title>
-  <!-- Decap CMS: Compatível nativamente com Netlify Identity e Git Gateway -->
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <link href="./config.yml" type="application/yaml" rel="cms-config-url" />
+  <!-- Sveltia CMS -->
+  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.1.2/dist/decap-cms.js"></script>
-  <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", (user) => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.reload();
-          });
-        }
-      });
-    }
-  </script>
 </body>
 </html>

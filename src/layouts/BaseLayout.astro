@@ -46,8 +46,6 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Netlify Identity Widget para Autenticação do CMS / Admin -->
-    <script is:inline src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
     <!-- Script Inline para evitar Flash no Dark Mode -->
     <script is:inline>
@@ -172,17 +170,5 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
       updateFloatingBadge();
     </script>
 
-    <!-- Redirecionamento pós-login no Netlify Identity para o Painel Admin -->
-    <script is:inline>
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", (user) => {
-          if (!user) {
-            window.netlifyIdentity.on("login", () => {
-              document.location.href = "/admin/";
-            });
-          }
-        });
-      }
-    </script>
   </body>
 </html>
