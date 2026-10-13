@@ -8,7 +8,7 @@ interface Window {
       preco: number;
       unidade: string;
       imagem: string;
-    }) => void;
+    }, abrir?: boolean) => void;
     abrir: () => void;
     fechar: () => void;
     limpar: () => void;

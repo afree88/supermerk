@@ -15,10 +15,45 @@ public_folder: "/images/uploads"
 
 collections:
   # ----------------------------------------------------
-  # 1. PRODUTOS DO MERCADO
+  # 1. SEÇÃO EXCLUSIVA DE OFERTAS & PROMOÇÕES
+  # ----------------------------------------------------
+  - name: "ofertas"
+    label: "🔥 Ofertas & Promoções"
+    label_singular: "Produto em Oferta"
+    folder: "src/content/produtos"
+    filter: { field: "destaque", value: true }
+    create: true
+    slug: "{{slug}}"
+    format: "frontmatter"
+    editor:
+      preview: true
+    summary: "🔥 {{nome}} - De R$ {{preco}} por R$ {{precoPromocional}} ({{categoria}})"
+    fields:
+      - { label: "Nome do Produto", name: "nome", widget: "string" }
+      - { label: "Preço Regular (R$)", name: "preco", widget: "number", value_type: "float", step: 0.01 }
+      - { label: "Preço Promocional (R$ - Valor com Desconto)", name: "precoPromocional", widget: "number", value_type: "float", step: 0.01, required: true }
+      - { label: "Unidade de Medida", name: "unidade", widget: "select", default: "un", options: ["kg", "un", "500g", "pct", "litro", "bandeja", "dúzia"] }
+      - { label: "Categoria", name: "categoria", widget: "select", options: [
+          "Frutas e Verduras",
+          "Carnes e Aves",
+          "Laticínios",
+          "Mercearia",
+          "Limpeza",
+          "Bebidas",
+          "Padaria",
+          "Higiene"
+        ] }
+      - { label: "Descrição da Oferta", name: "descricao", widget: "text" }
+      - { label: "Foto do Produto", name: "imagem", widget: "image" }
+      - { label: "Disponível em Estoque?", name: "disponivel", widget: "boolean", default: true }
+      - { label: "Ativar como Destaque / Oferta da Semana?", name: "destaque", widget: "boolean", default: true }
+      - { label: "Observações ou Detalhes Extras", name: "body", widget: "markdown", required: false }
+
+  # ----------------------------------------------------
+  # 2. CATÁLOGO COMPLETO DE PRODUTOS
   # ----------------------------------------------------
   - name: "produtos"
-    label: "Produtos"
+    label: "🛒 Todos os Produtos"
     label_singular: "Produto"
     folder: "src/content/produtos"
     create: true
@@ -27,6 +62,13 @@ collections:
     editor:
       preview: true
     summary: "{{nome}} - R$ {{preco}} ({{categoria}})"
+    view_filters:
+      - label: "🔥 Apenas Ofertas"
+        field: "destaque"
+        pattern: true
+      - label: "✅ Apenas Disponíveis"
+        field: "disponivel"
+        pattern: true
     fields:
       - { label: "Nome do Produto", name: "nome", widget: "string" }
       - { label: "Preço Regular (R$)", name: "preco", widget: "number", value_type: "float", step: 0.01 }
@@ -60,8 +102,8 @@ collections:
         fields:
           - { label: "Nome do Mercado", name: "nomeLoja", widget: "string", default: "Mercado Bom Preço" }
           - { label: "Slogan / Frase", name: "slogan", widget: "string", default: "Economia e qualidade pertinho de você todos os dias!" }
-          - { label: "Telefone de Contato", name: "telefone", widget: "string", default: "(11) 3456-7890" }
-          - { label: "WhatsApp para Pedidos (apenas números)", name: "whatsapp", widget: "string", default: "5511999998888" }
+          - { label: "Telefone de Contato", name: "telefone", widget: "string", default: "(99) 9175-6968" }
+          - { label: "WhatsApp para Pedidos (apenas números)", name: "whatsapp", widget: "string", default: "559991756968" }
           - { label: "Endereço Completo", name: "endereco", widget: "string", default: "Rua das Flores, 123 - Centro" }
           - { label: "Bairro e Cidade", name: "cidadeBairro", widget: "string", default: "Bairro Jardim - São Paulo, SP" }
           - { label: "Link do Google Maps para Rotas", name: "googleMapsUrl", widget: "string", default: "https://maps.google.com" }
@@ -71,6 +113,6 @@ collections:
           - { label: "Aviso Especial no Topo (ex: Aberto no feriado)", name: "bannerAviso", widget: "string", required: false, default: "🎉 Ofertas especiais de Hortifruti toda quarta e quinta-feira!" }
           - { label: "Título do Banner Principal", name: "bannerTitulo", widget: "string", default: "Ofertas que Cabem no Seu Bolso" }
           - { label: "Subtítulo do Banner Principal", name: "bannerSubtitulo", widget: "string", default: "Produtos frescos selecionados, carnes nobres e marcas que você confia com preços imbatíveis." }
-          - { label: "Chave PIX da Loja", name: "chavePix", widget: "string", default: "11999998888" }
+          - { label: "Chave PIX da Loja", name: "chavePix", widget: "string", default: "559991756968" }
           - { label: "Tipo da Chave PIX (ex: CNPJ, Celular, E-mail)", name: "tipoChavePix", widget: "string", default: "Celular / WhatsApp" }
           - { label: "Nome do Titular do PIX", name: "titularPix", widget: "string", default: "Mercado Bom Preço Ltda" }

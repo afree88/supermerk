@@ -31,7 +31,7 @@ const configuracoesCollection = defineCollection({
     bannerAviso: z.string().optional().nullable(),
     bannerTitulo: z.string(),
     bannerSubtitulo: z.string(),
-    chavePix: z.string().default('11999998888'),
+    chavePix: z.string().default('559991756968'),
     tipoChavePix: z.string().default('Celular / Telefone'),
     titularPix: z.string().default('Mercado Bom Preço Ltda'),
   }),

@@ -18,9 +18,9 @@ const { Content } = await produto.render();
 const configEntry = await getEntry('configuracoes', 'loja');
 const loja = configEntry?.data ?? {
   nomeLoja: 'Mercado Bom Preço',
-  whatsapp: '5511999998888',
-  telefone: '(11) 3456-7890',
-  chavePix: '11999998888',
+  whatsapp: '559991756968',
+  telefone: '(99) 9175-6968',
+  chavePix: '559991756968',
   tipoChavePix: 'Celular / WhatsApp',
   titularPix: 'Mercado Bom Preço Ltda',
 };
@@ -246,7 +246,7 @@ const produtosRelacionados = todosProdutos
         <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">
           Outros produtos em {produto.data.categoria}
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {produtosRelacionados.map((rel) => (
             <ProductCard
               slug={rel.slug}

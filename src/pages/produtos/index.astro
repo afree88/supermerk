@@ -7,7 +7,7 @@ import { getCollection, getEntry } from 'astro:content';
 const configEntry = await getEntry('configuracoes', 'loja');
 const loja = configEntry?.data ?? {
   nomeLoja: 'Mercado Bom Preço',
-  whatsapp: '5511999998888',
+  whatsapp: '559991756968',
 };
 
 const todosProdutos = await getCollection('produtos');
@@ -60,19 +60,19 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
     </div>
 
     <!-- Barra de Filtros e Busca Rápida -->
-    <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm mb-8 space-y-4">
+    <div class="bg-white dark:bg-slate-900 p-3.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm mb-6 sm:mb-8 space-y-3 sm:space-y-4">
       
       <!-- Input de busca interativa em tempo real -->
-      <div class="flex flex-col sm:flex-row gap-3">
+      <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
         <div class="relative flex-1">
           <input
             type="text"
             id="filtro-busca"
             value={buscaUrl}
-            placeholder="Buscar por nome do produto (ex: alcatra, leite, banana, arroz)..."
-            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+            placeholder="Buscar por nome do produto..."
+            class="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
           />
-          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <div class="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-slate-400">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
@@ -83,7 +83,7 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
         <div class="sm:w-56 shrink-0">
           <select
             id="filtro-ordenacao"
-            class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-700 dark:text-slate-200 font-medium"
+            class="w-full px-3 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-700 dark:text-slate-200 font-medium"
           >
             <option value="padrao">Ordenar: Destaques</option>
             <option value="menor-preco">Preço: Menor para Maior</option>
@@ -95,13 +95,13 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
       </div>
 
       <!-- Barra de Categorias -->
-      <div class="pt-2 border-t border-slate-100">
+      <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
         <CategoryChips activeCategory={categoriaUrl} baseUrl="/produtos" />
       </div>
     </div>
 
     <!-- Grid de Produtos com tags de dados para filtragem em tempo real -->
-    <div id="grid-produtos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div id="grid-produtos" class="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {todosProdutos.map((prod) => {
         const precoEfetivo = prod.data.precoPromocional && prod.data.precoPromocional < prod.data.preco
           ? prod.data.precoPromocional

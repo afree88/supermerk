@@ -409,7 +409,7 @@ const { loja } = Astro.props;
 
   // API Global do Carrinho para outros componentes utilizarem
   window.carrinhoMercado = {
-    adicionar(produto) {
+    adicionar(produto, abrir = false) {
       const cart = getCart();
       const existente = cart.find((i) => i.slug === produto.slug);
       if (existente) {
@@ -418,7 +418,9 @@ const { loja } = Astro.props;
         cart.push({ ...produto, quantidade: 1 });
       }
       saveCart(cart);
-      openCart();
+      if (abrir) {
+        openCart();
+      }
     },
     abrir: openCart,
     fechar: closeCart,

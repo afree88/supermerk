@@ -48,19 +48,19 @@ const navLinks = [
   </div>
 
   <!-- Cabeçalho Principal -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
     <!-- Logo -->
-    <a href="/" class="flex items-center gap-2.5 group shrink-0">
-      <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center text-white shadow-md shadow-brand-600/20 group-hover:scale-105 transition-transform">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="/" class="flex items-center gap-2 sm:gap-2.5 group shrink-0">
+      <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center text-white shadow-md shadow-brand-600/20 group-hover:scale-105 transition-transform shrink-0">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
         </svg>
       </div>
-      <div>
-        <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight block leading-tight">
+      <div class="min-w-0">
+        <span class="text-base sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight block leading-tight truncate">
           {loja.nomeLoja.split(' ')[0]} <span class="text-brand-600 dark:text-brand-400">{loja.nomeLoja.split(' ').slice(1).join(' ')}</span>
         </span>
-        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold tracking-wide uppercase">Supermercado & Padaria</span>
+        <span class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-semibold tracking-wide uppercase hidden min-[360px]:block">Supermercado & Padaria</span>
       </div>
     </a>
 
@@ -82,7 +82,7 @@ const navLinks = [
     </form>
 
     <!-- Botões de Ação do Header -->
-    <div class="flex items-center gap-2 sm:gap-3">
+    <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
       
       <!-- Botão Alternador Tema Dark / Light -->
       <button
@@ -93,11 +93,11 @@ const navLinks = [
         title="Alternar tema claro/escuro"
       >
         <!-- Ícone Sol (quando estiver escuro) -->
-        <svg id="theme-sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg id="theme-sun-icon" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
         <!-- Ícone Lua (quando estiver claro) -->
-        <svg id="theme-moon-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg id="theme-moon-icon" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
       </button>
@@ -106,10 +106,10 @@ const navLinks = [
       <button
         id="cart-header-btn"
         type="button"
-        class="relative flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-50 dark:bg-slate-800 border border-brand-200 dark:border-slate-700 text-brand-800 dark:text-brand-300 font-bold text-xs sm:text-sm hover:bg-brand-100 dark:hover:bg-slate-700 transition"
+        class="relative flex items-center gap-1.5 sm:gap-2 px-2.5 py-2 sm:px-3 sm:py-2 rounded-xl bg-brand-50 dark:bg-slate-800 border border-brand-200 dark:border-slate-700 text-brand-800 dark:text-brand-300 font-bold text-xs sm:text-sm hover:bg-brand-100 dark:hover:bg-slate-700 transition"
         aria-label="Abrir carrinho"
       >
-        <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
         </svg>
         <span class="hidden sm:inline">Carrinho</span>
