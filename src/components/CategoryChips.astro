@@ -20,7 +20,7 @@ const categorias = [
 ---
 
 <div class="w-full">
-  <div class="flex items-center gap-2.5 overflow-x-auto pb-3 pt-1 scrollbar-none no-scrollbar">
+  <div class="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-2.5 pt-1 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none no-scrollbar touch-pan-x">
     {categorias.map((cat) => {
       const isSelected = (!activeCategory && cat.name === 'Todas') || activeCategory === cat.name;
       const targetHref = cat.name === 'Todas' ? baseUrl : `${baseUrl}?categoria=${encodeURIComponent(cat.name)}`;
@@ -28,13 +28,13 @@ const categorias = [
       return (
         <a
           href={targetHref}
-          class={`shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 border shadow-sm ${
+          class={`shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 border shadow-sm ${
             isSelected
               ? 'bg-brand-600 dark:bg-brand-500 text-white border-brand-600 shadow-brand-500/25 shadow-md scale-[1.02]'
               : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-600 hover:bg-slate-50 dark:hover:bg-slate-800'
           }`}
         >
-          <span class="text-base">{cat.icon}</span>
+          <span class="text-sm sm:text-base">{cat.icon}</span>
           <span>{cat.name}</span>
         </a>
       );

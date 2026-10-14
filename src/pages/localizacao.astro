@@ -20,23 +20,23 @@ const loja = configEntry?.data ?? {
   title={`Onde Estamos & Localização - ${loja.nomeLoja}`}
   description="Venha nos visitar! Veja o mapa, endereço e como chegar ao Mercado Bom Preço. Estacionamento gratuito para clientes."
 >
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-16">
     
     <!-- Cabeçalho -->
-    <div class="max-w-3xl mb-12">
-      <span class="text-xs uppercase font-extrabold tracking-wider text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/60 dark:border-brand-800/80 px-3.5 py-1.5 rounded-full inline-block mb-3">
+    <div class="max-w-3xl mb-8 sm:mb-12">
+      <span class="text-xs uppercase font-extrabold tracking-wider text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/60 dark:border-brand-800/80 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full inline-block mb-2 sm:mb-3">
         Venha nos Visitar
       </span>
-      <h1 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+      <h1 class="text-2xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
         Localização Fácil e Estacionamento Próprio
       </h1>
-      <p class="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+      <p class="mt-2 sm:mt-3 text-slate-600 dark:text-slate-400 text-xs sm:text-base">
         Localizado estrategicamente no coração do bairro, com fácil acesso para pedestres, transporte público e carros.
       </p>
     </div>
 
     <!-- Container do Mapa do Google Maps -->
-    <div class="relative w-full rounded-3xl overflow-hidden shadow-xl border border-slate-200/90 dark:border-slate-800 mb-12 bg-slate-100 dark:bg-slate-800 aspect-[16/9] max-h-[500px]">
+    <div class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-slate-200/90 dark:border-slate-800 mb-8 sm:mb-12 bg-slate-100 dark:bg-slate-800 aspect-[16/9] min-h-[260px] max-h-[500px]">
       <iframe
         src={loja.googleMapsEmbed}
         width="100%"
@@ -51,10 +51,10 @@ const loja = configEntry?.data ?? {
     </div>
 
     <!-- Informações de Rota, Estacionamento e Horários -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
       
       <!-- Card 1: Endereço & Trajeto -->
-      <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-card flex flex-col justify-between">
+      <div class="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-card flex flex-col justify-between">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl mb-4">
             📍

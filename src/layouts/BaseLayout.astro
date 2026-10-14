@@ -90,7 +90,8 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <CartDrawer loja={loja} />
 
     <!-- Conteúdo principal da página -->
-    <main class="flex-1">
+    <!-- Conteúdo principal da página com margem inferior para não cobrir conteúdo no mobile -->
+    <main class="flex-1 pb-16 sm:pb-8 overflow-x-hidden">
       <slot />
     </main>
 
@@ -98,21 +99,21 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <Footer loja={loja} />
 
     <!-- Botões Flutuantes (WhatsApp e Carrinho Rápido) -->
-    <div class="fixed bottom-6 right-6 z-40 flex flex-col gap-3 items-end">
+    <div class="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-40 flex flex-col gap-2.5 sm:gap-3 items-end pointer-events-none">
       <!-- Botão Flutuante do Carrinho -->
       <button
         id="btn-cart-floating"
         type="button"
-        class="relative flex items-center gap-2.5 rounded-full bg-brand-600 dark:bg-brand-500 hover:bg-brand-500 dark:hover:bg-brand-400 text-white font-bold p-3.5 sm:px-4 sm:py-3 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-brand-300"
+        class="pointer-events-auto relative flex items-center gap-2 rounded-full bg-brand-600 dark:bg-brand-500 hover:bg-brand-500 dark:hover:bg-brand-400 text-white font-bold p-3 sm:px-4 sm:py-3 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-brand-300"
         aria-label="Abrir carrinho de compras"
       >
-        <svg class="w-6 h-6 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
         </svg>
         <span class="hidden sm:inline text-sm">Meu Carrinho</span>
         <span
           id="cart-badge-floating"
-          class="hidden absolute -top-1.5 -right-1.5 min-w-[22px] h-[22px] px-1 bg-promo-500 text-white text-[11px] font-black rounded-full flex items-center justify-center shadow border-2 border-white dark:border-slate-950"
+          class="hidden absolute -top-1 -right-1 min-w-[20px] h-[20px] sm:min-w-[22px] sm:h-[22px] px-1 bg-promo-500 text-white text-[10px] sm:text-[11px] font-black rounded-full flex items-center justify-center shadow border-2 border-white dark:border-slate-950"
         >
           0
         </span>
@@ -123,7 +124,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
         href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de informações sobre produtos e ofertas do Mercado Bom Preço.')}`}
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold p-3 sm:px-3.5 sm:py-2.5 shadow-lg hover:shadow-xl hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300"
+        class="pointer-events-auto flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold p-2.5 sm:px-3.5 sm:py-2.5 shadow-lg hover:shadow-xl hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300"
         aria-label="Fale conosco pelo WhatsApp"
         title="WhatsApp Oficial"
       >
@@ -154,6 +155,11 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
               floatingBadge.classList.add('hidden');
               floatingBadge.classList.remove('flex');
             }
+          }
+
+          if (floatingBtn && totalQtd > 0) {
+            floatingBtn.classList.add('scale-105');
+            setTimeout(() => floatingBtn.classList.remove('scale-105'), 250);
           }
         } catch {
           // ignore

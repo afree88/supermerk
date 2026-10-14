@@ -53,7 +53,7 @@ const categoriasCards = [
   <PromoBanner loja={loja} />
 
   <!-- 2. Filtro Rápido de Categorias -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
+  <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 my-6 sm:my-8">
     <div class="flex items-center justify-between mb-3">
       <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
         <span>Categorias Populares</span>
@@ -150,23 +150,23 @@ const categoriasCards = [
   </section>
 
   <!-- 5. Produtos em Destaque Geral -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div class="flex items-center justify-between mb-8">
+  <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <div class="flex items-center justify-between mb-6 sm:mb-8">
       <div>
         <span class="text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400">Mais Procurados</span>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+        <h2 class="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
           Destaques Selecionados
         </h2>
       </div>
       <a
         href="/produtos"
-        class="text-sm font-bold text-brand-700 dark:text-brand-400 hover:text-brand-800"
+        class="text-xs sm:text-sm font-bold text-brand-700 dark:text-brand-400 hover:text-brand-800"
       >
         Ver todos &rarr;
       </a>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {produtosDestaque.map((prod) => (
         <ProductCard
           slug={prod.slug}
@@ -186,35 +186,35 @@ const categoriasCards = [
   </section>
 
   <!-- 6. Seção de Confiança / Benefícios do Mercado de Bairro -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="bg-gradient-to-br from-brand-950 to-brand-900 text-white rounded-3xl p-8 sm:p-12 shadow-xl border border-brand-800/60">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+  <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div class="bg-gradient-to-br from-brand-950 to-brand-900 text-white rounded-2xl sm:rounded-3xl p-6 sm:p-12 shadow-xl border border-brand-800/60">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-center md:text-left">
         <div class="flex flex-col items-center md:items-start">
-          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-4">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-3 sm:mb-4">
             🥦
           </div>
-          <h3 class="text-lg font-bold">Hortifruti Direto do Produtor</h3>
-          <p class="text-xs text-brand-100/90 mt-2 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold">Hortifruti Direto do Produtor</h3>
+          <p class="text-xs text-brand-100/90 mt-1.5 sm:mt-2 leading-relaxed">
             Abastecemos nossas bancas de verduras e legumes diariamente para garantir o máximo de sabor e nutrientes.
           </p>
         </div>
 
         <div class="flex flex-col items-center md:items-start">
-          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-4">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-3 sm:mb-4">
             🥩
           </div>
-          <h3 class="text-lg font-bold">Açougue com Corte Sob Medida</h3>
-          <p class="text-xs text-brand-100/90 mt-2 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold">Açougue com Corte Sob Medida</h3>
+          <p class="text-xs text-brand-100/90 mt-1.5 sm:mt-2 leading-relaxed">
             Carnes nobres com procedência de frigoríficos inspecionados. Nossos açougueiros preparam o corte do jeito que você gosta.
           </p>
         </div>
 
         <div class="flex flex-col items-center md:items-start">
-          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-4">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl mb-3 sm:mb-4">
             💳
           </div>
-          <h3 class="text-lg font-bold">Pague com PIX ou no WhatsApp</h3>
-          <p class="text-xs text-brand-100/90 mt-2 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold">Pague com PIX ou no WhatsApp</h3>
+          <p class="text-xs text-brand-100/90 mt-1.5 sm:mt-2 leading-relaxed">
             Monte seu carrinho no site e pague na hora com PIX, ou mande sua listinha no WhatsApp para entrega a domicílio.
           </p>
         </div>
@@ -223,19 +223,19 @@ const categoriasCards = [
   </section>
 
   <!-- 7. Seção Informativa: Horário e Localização Rápida -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-12">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200/90 dark:border-slate-800 shadow-card flex flex-col lg:flex-row items-center justify-between gap-8">
-      <div class="space-y-3">
+  <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 mb-8 sm:mb-12">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-5 sm:p-10 border border-slate-200/90 dark:border-slate-800 shadow-card flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8">
+      <div class="space-y-2.5 sm:space-y-3 w-full lg:w-auto">
         <span class="inline-block text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/50 dark:border-brand-800/80 px-3 py-1 rounded-full">
           Visite Nossa Loja Física
         </span>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+        <h2 class="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
           Estamos de portas abertas para te receber!
         </h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400">
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
           {loja.endereco} &bull; {loja.cidadeBairro}
         </p>
-        <div class="flex flex-wrap gap-4 pt-2 text-xs font-medium text-slate-700 dark:text-slate-300">
+        <div class="flex flex-wrap gap-2.5 sm:gap-4 pt-1 sm:pt-2 text-xs font-medium text-slate-700 dark:text-slate-300">
           <span class="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
             📅 {loja.horarioSemana}
           </span>
@@ -245,10 +245,10 @@ const categoriasCards = [
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-3 w-full lg:w-auto">
+      <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full lg:w-auto">
         <a
           href="/localizacao"
-          class="flex-1 sm:flex-none text-center px-6 py-3.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm shadow transition"
+          class="w-full sm:w-auto text-center px-6 py-3 sm:py-3.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs sm:text-sm shadow transition"
         >
           Ver Rota no Mapa
         </a>
@@ -256,7 +256,7 @@ const categoriasCards = [
           href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de fazer uma encomenda.')}`}
           target="_blank"
           rel="noopener noreferrer"
-          class="flex-1 sm:flex-none text-center px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow transition"
+          class="w-full sm:w-auto text-center px-6 py-3 sm:py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow transition"
         >
           Falar no WhatsApp
         </a>
