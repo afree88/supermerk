@@ -5,7 +5,7 @@ import { getEntry } from 'astro:content';
 
 const configEntry = await getEntry('configuracoes', 'loja');
 const loja = configEntry?.data ?? {
-  nomeLoja: 'Mercado Bom Preço',
+  nomeLoja: 'Supermerk',
   telefone: '(99) 9175-6968',
   whatsapp: '559991756968',
   endereco: 'Rua das Flores, 123 - Centro',
@@ -38,7 +38,7 @@ const faqs = [
 
 <BaseLayout
   title={`Contato e Atendimento - ${loja.nomeLoja}`}
-  description="Entre em contato com o Mercado Bom Preço. Tire dúvidas, faça encomendas ou envie sugestões diretamente para a nossa gerência."
+  description="Entre em contato com o Supermerk. Tire dúvidas, faça encomendas ou envie sugestões diretamente para a nossa gerência."
 >
   <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-16">
     
@@ -94,7 +94,7 @@ const faqs = [
             Prefere pedir sem preencher formulários? Chame direto no nosso número e receba o encarte em PDF.
           </p>
           <a
-            href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de falar com o atendimento do Mercado Bom Preço.')}`}
+            href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de falar com o atendimento do Supermerk.')}`}
             target="_blank"
             rel="noopener noreferrer"
             class="w-full inline-flex items-center justify-center gap-2 bg-white text-emerald-800 font-bold text-sm py-3 px-4 rounded-xl hover:bg-emerald-50 transition shadow"

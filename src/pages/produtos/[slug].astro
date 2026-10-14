@@ -17,12 +17,12 @@ const { Content } = await produto.render();
 // Busca dados da loja para WhatsApp e telefones
 const configEntry = await getEntry('configuracoes', 'loja');
 const loja = configEntry?.data ?? {
-  nomeLoja: 'Mercado Bom Preço',
+  nomeLoja: 'Supermerk',
   whatsapp: '559991756968',
   telefone: '(99) 9175-6968',
   chavePix: '559991756968',
   tipoChavePix: 'Celular / WhatsApp',
-  titularPix: 'Mercado Bom Preço Ltda',
+  titularPix: 'Supermerk Ltda',
 };
 
 // Formatação brasileira de moeda

@@ -18,7 +18,7 @@ const produtosCollection = defineCollection({
 const configuracoesCollection = defineCollection({
   type: 'data',
   schema: z.object({
-    nomeLoja: z.string().default('Mercado Bom Preço'),
+    nomeLoja: z.string().default('Supermerk'),
     slogan: z.string().default('Economia e qualidade pertinho de você!'),
     telefone: z.string(),
     whatsapp: z.string(),
@@ -33,7 +33,7 @@ const configuracoesCollection = defineCollection({
     bannerSubtitulo: z.string(),
     chavePix: z.string().default('559991756968'),
     tipoChavePix: z.string().default('Celular / Telefone'),
-    titularPix: z.string().default('Mercado Bom Preço Ltda'),
+    titularPix: z.string().default('Supermerk Ltda'),
   }),
 });
 

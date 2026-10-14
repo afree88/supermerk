@@ -4,7 +4,7 @@ import { getEntry } from 'astro:content';
 
 const configEntry = await getEntry('configuracoes', 'loja');
 const loja = configEntry?.data ?? {
-  nomeLoja: 'Mercado Bom Preço',
+  nomeLoja: 'Supermerk',
   slogan: 'Economia e qualidade pertinho de você!',
   telefone: '(99) 9175-6968',
   whatsapp: '559991756968',
@@ -15,7 +15,7 @@ const loja = configEntry?.data ?? {
 
 <BaseLayout
   title={`Sobre Nós - ${loja.nomeLoja}`}
-  description="Conheça a história e os valores do Mercado Bom Preço. Há anos servindo a nossa vizinhança com carinho, economia e qualidade."
+  description="Conheça a história e os valores do Supermerk. Há anos servindo a nossa vizinhança com carinho, economia e qualidade."
 >
   <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-16">
     
@@ -37,7 +37,7 @@ const loja = configEntry?.data ?? {
       <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800">
         <img
           src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80"
-          alt="Corredores abastecidos do Mercado Bom Preço"
+          alt="Corredores abastecidos do Supermerk"
           class="w-full h-[260px] sm:h-[420px] object-cover"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>

@@ -13,7 +13,7 @@ interface Props {
 
 const configEntry = await getEntry('configuracoes', 'loja');
 const loja = configEntry?.data ?? {
-  nomeLoja: 'Mercado Bom Preço',
+  nomeLoja: 'Supermerk',
   slogan: 'Economia e qualidade pertinho de você!',
   telefone: '(99) 9175-6968',
   whatsapp: '559991756968',
@@ -25,7 +25,7 @@ const loja = configEntry?.data ?? {
   googleMapsUrl: 'https://maps.google.com',
   chavePix: '559991756968',
   tipoChavePix: 'Celular / WhatsApp',
-  titularPix: 'Mercado Bom Preço Ltda',
+  titularPix: 'Supermerk Ltda',
 };
 
 const {
@@ -121,7 +121,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 
       <!-- Botão Flutuante do WhatsApp -->
       <a
-        href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de informações sobre produtos e ofertas do Mercado Bom Preço.')}`}
+        href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de informações sobre produtos e ofertas do Supermerk.')}`}
         target="_blank"
         rel="noopener noreferrer"
         class="pointer-events-auto flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold p-2.5 sm:px-3.5 sm:py-2.5 shadow-lg hover:shadow-xl hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300 animate-float-delayed"

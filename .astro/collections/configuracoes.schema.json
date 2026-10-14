@@ -6,7 +6,7 @@
       "properties": {
         "nomeLoja": {
           "type": "string",
-          "default": "Mercado Bom Preço"
+          "default": "Supermerk"
         },
         "slogan": {
           "type": "string",
@@ -69,7 +69,7 @@
         },
         "titularPix": {
           "type": "string",
-          "default": "Mercado Bom Preço Ltda"
+          "default": "Supermerk Ltda"
         },
         "$schema": {
           "type": "string"

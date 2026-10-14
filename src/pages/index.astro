@@ -8,7 +8,7 @@ import { getCollection, getEntry } from 'astro:content';
 // Busca dados da loja
 const configEntry = await getEntry('configuracoes', 'loja');
 const loja = configEntry?.data ?? {
-  nomeLoja: 'Mercado Bom Preço',
+  nomeLoja: 'Supermerk',
   slogan: 'Economia e qualidade pertinho de você!',
   telefone: '(99) 9175-6968',
   whatsapp: '559991756968',
@@ -20,7 +20,7 @@ const loja = configEntry?.data ?? {
   bannerSubtitulo: 'Frutas fresquinhas colhidas no dia, carnes nobres e marcas de confiança pelo menor preço da região.',
   chavePix: '559991756968',
   tipoChavePix: 'Celular / WhatsApp',
-  titularPix: 'Mercado Bom Preço Ltda',
+  titularPix: 'Supermerk Ltda',
 };
 
 // Busca todos os produtos

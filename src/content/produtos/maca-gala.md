@@ -9,4 +9,4 @@ imagem: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&f
 disponivel: true
 destaque: true
 ---
-Maçã Gala fresquinha selecionada uma a uma no hortifruti do Mercado Bom Preço. Perfeita para lanches escolares, tortas ou sucos naturais.
+Maçã Gala fresquinha selecionada uma a uma no hortifruti do Supermerk. Perfeita para lanches escolares, tortas ou sucos naturais.
