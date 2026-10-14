@@ -104,7 +104,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
       <button
         id="btn-cart-floating"
         type="button"
-        class="pointer-events-auto relative flex items-center gap-2 rounded-full bg-brand-600 dark:bg-brand-500 hover:bg-brand-500 dark:hover:bg-brand-400 text-white font-bold p-3 sm:px-4 sm:py-3 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-brand-300"
+        class="pointer-events-auto relative flex items-center gap-2 rounded-full bg-brand-600 dark:bg-brand-500 hover:bg-brand-500 dark:hover:bg-brand-400 text-white font-bold p-3 sm:px-4 sm:py-3 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all focus:outline-none focus:ring-4 focus:ring-brand-300 animate-float"
         aria-label="Abrir carrinho de compras"
       >
         <svg class="w-5 h-5 sm:w-6 sm:h-6 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
@@ -124,7 +124,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
         href={`https://wa.me/${loja.whatsapp}?text=${encodeURIComponent('Olá! Gostaria de informações sobre produtos e ofertas do Mercado Bom Preço.')}`}
         target="_blank"
         rel="noopener noreferrer"
-        class="pointer-events-auto flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold p-2.5 sm:px-3.5 sm:py-2.5 shadow-lg hover:shadow-xl hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300"
+        class="pointer-events-auto flex items-center gap-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold p-2.5 sm:px-3.5 sm:py-2.5 shadow-lg hover:shadow-xl hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300 animate-float-delayed"
         aria-label="Fale conosco pelo WhatsApp"
         title="WhatsApp Oficial"
       >
@@ -174,6 +174,36 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 
       window.addEventListener('cart:updated', updateFloatingBadge);
       updateFloatingBadge();
+
+      // Observador para revelação suave de seções no scroll (Scroll Reveal)
+      function initScrollReveal() {
+        const elements = document.querySelectorAll('.reveal-on-scroll');
+        if (!elements.length) return;
+
+        if ('IntersectionObserver' in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('is-revealed');
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+          );
+
+          elements.forEach((el) => observer.observe(el));
+        } else {
+          elements.forEach((el) => el.classList.add('is-revealed'));
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollReveal);
+      } else {
+        initScrollReveal();
+      }
     </script>
 
   </body>

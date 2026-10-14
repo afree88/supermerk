@@ -28,3 +28,194 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* ==========================================================================
+   ANIMAÇÕES MODERNAS E MICRO-INTERAÇÕES
+   ========================================================================== */
+
+/* 1. Shimmer de letras / gradiente fluido em textos */
+@keyframes text-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-text-shimmer {
+  background: linear-gradient(90deg, #ffffff 0%, #a7f3d0 25%, #fde047 50%, #6ee7b7 75%, #ffffff 100%);
+  background-size: 250% 250%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 6s ease-in-out infinite;
+  display: inline-block;
+}
+
+.animate-text-fire {
+  background: linear-gradient(90deg, #ea580c 0%, #dc2626 30%, #f59e0b 60%, #ea580c 100%);
+  background-size: 250% 250%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 5s ease-in-out infinite;
+  display: inline-block;
+}
+
+.animate-text-emerald {
+  background: linear-gradient(90deg, #15803d 0%, #16a34a 30%, #059669 60%, #15803d 100%);
+  background-size: 250% 250%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* 2. Efeito de brilho reflexivo nos botões de ação (CTA Shine) */
+@keyframes btn-shine-sweep {
+  0% {
+    left: -120%;
+  }
+  20%, 100% {
+    left: 150%;
+  }
+}
+
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -120%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  animation: btn-shine-sweep 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 3. Flutuação suave (Floating elements & badges) */
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-subtle 4s ease-in-out infinite 2s;
+}
+
+/* 4. Orbes luminosos de fundo (Atmospheric Glow) */
+@keyframes orb-pulse-1 {
+  0%, 100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.15) translate(15px, -10px);
+    opacity: 0.45;
+  }
+}
+
+@keyframes orb-pulse-2 {
+  0%, 100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.2) translate(-20px, 15px);
+    opacity: 0.4;
+  }
+}
+
+.animate-glow-orb-1 {
+  animation: orb-pulse-1 8s ease-in-out infinite alternate;
+}
+
+.animate-glow-orb-2 {
+  animation: orb-pulse-2 10s ease-in-out infinite alternate;
+}
+
+/* 5. Balanço sutil para ícones / tags de oferta */
+@keyframes flame-wiggle {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-6deg) scale(1.1);
+  }
+  75% {
+    transform: rotate(6deg) scale(1.1);
+  }
+}
+
+.animate-flame {
+  display: inline-block;
+  animation: flame-wiggle 2.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* 6. Revelação suave ao rolar a página (Scroll Reveal) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 7. Hover em cards com elevação suave */
+.card-hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Respeito à preferência de acessibilidade (reduced-motion) */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-text-shimmer,
+  .animate-text-fire,
+  .animate-text-emerald,
+  .animate-float,
+  .animate-float-delayed,
+  .animate-glow-orb-1,
+  .animate-glow-orb-2,
+  .animate-flame,
+  .btn-shine::after {
+    animation: none !important;
+  }
+  .card-hover-lift:hover {
+    transform: none !important;
+  }
+}
+

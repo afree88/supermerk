@@ -41,13 +41,13 @@ const percentualDesconto = temPromocao
 const precoFinal = temPromocao ? precoPromocional : preco;
 ---
 
-<div class={`group relative flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-card hover:shadow-card-hover hover:border-brand-300 dark:hover:border-brand-500 transition-all duration-300 overflow-hidden ${!disponivel ? 'opacity-70 grayscale-[30%]' : ''}`}>
+<div class={`group card-hover-lift relative flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-card hover:shadow-card-hover hover:border-brand-300 dark:hover:border-brand-500 transition-all duration-300 overflow-hidden ${!disponivel ? 'opacity-70 grayscale-[30%]' : ''}`}>
   
   <!-- Badges Flutuantes -->
   <div class="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 flex flex-col gap-1 sm:gap-1.5 items-start pointer-events-none">
     {temPromocao && disponivel && (
       <span class="inline-flex items-center gap-1 bg-gradient-to-r from-red-600 to-promo-600 text-white text-[10px] sm:text-[11px] font-extrabold px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-md tracking-wider uppercase">
-        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.316.492-.633 1.09-1.026 1.838-.727 1.385-1.745 3.32-3.177 5.642C4.375 13.064 3 15.65 3 17a4 4 0 008 0c0-.853-.298-1.636-.8-2.26a1 1 0 01.378-1.558c.995-.49 1.954-1.22 2.76-2.128.825-.928 1.488-2.036 1.914-3.238.163-.46.305-.924.423-1.39A8.995 8.995 0 0016 7a1 1 0 00-1-1c-.88 0-1.704.28-2.605.553z" clip-rule="evenodd"></path></svg>
+        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 animate-flame" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.316.492-.633 1.09-1.026 1.838-.727 1.385-1.745 3.32-3.177 5.642C4.375 13.064 3 15.65 3 17a4 4 0 008 0c0-.853-.298-1.636-.8-2.26a1 1 0 01.378-1.558c.995-.49 1.954-1.22 2.76-2.128.825-.928 1.488-2.036 1.914-3.238.163-.46.305-.924.423-1.39A8.995 8.995 0 0016 7a1 1 0 00-1-1c-.88 0-1.704.28-2.605.553z" clip-rule="evenodd"></path></svg>
         {percentualDesconto}% OFF
       </span>
     )}
