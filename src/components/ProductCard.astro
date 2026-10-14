@@ -129,22 +129,48 @@ const precoFinal = temPromocao ? precoPromocional : preco;
 
       <!-- Botões de Ação do Card -->
       <div class="mt-2 sm:mt-3.5 flex flex-col gap-1 sm:gap-2">
-        <!-- Botão Adicionar ao Carrinho -->
+        <!-- Botão / Controle de Quantidade -->
         {disponivel ? (
-          <button
-            type="button"
-            class="btn-add-carrinho w-full flex items-center justify-center gap-1 sm:gap-2 text-[11px] sm:text-xs font-bold text-white bg-brand-600 hover:bg-brand-500 active:scale-95 px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl shadow-sm hover:shadow transition-all"
-            data-slug={slug}
-            data-nome={nome}
-            data-preco={precoFinal}
-            data-unidade={unidade}
-            data-imagem={imagem}
-          >
-            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-            <span class="btn-text">Adicionar<span class="hidden sm:inline"> ao Carrinho</span></span>
-          </button>
+          <div class="qty-ctrl-wrapper" data-slug={slug}>
+            <!-- Estado 1: Botão "Adicionar" (mostrado quando qty = 0) -->
+            <button
+              type="button"
+              class="btn-add-carrinho qty-add-btn w-full flex items-center justify-center gap-1 sm:gap-2 text-[11px] sm:text-xs font-bold text-white bg-brand-600 hover:bg-brand-500 active:scale-95 px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl shadow-sm hover:shadow transition-all"
+              data-slug={slug}
+              data-nome={nome}
+              data-preco={precoFinal}
+              data-unidade={unidade}
+              data-imagem={imagem}
+            >
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              <span>Adicionar<span class="hidden sm:inline"> ao Carrinho</span></span>
+            </button>
+
+            <!-- Estado 2: Controle de quantidade [ − N + ] (mostrado quando qty > 0) -->
+            <div class="qty-stepper hidden w-full items-center justify-between gap-1 bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-700 rounded-xl px-1 py-1 sm:py-1.5">
+              <button
+                type="button"
+                class="qty-dec-btn flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-red-50 dark:hover:bg-red-950/40 hover:border-red-300 hover:text-red-600 active:scale-90 transition-all font-black text-base"
+                data-slug={slug}
+                aria-label="Remover um"
+              >−</button>
+
+              <span class="qty-display text-sm sm:text-base font-black text-brand-700 dark:text-brand-300 min-w-[1.5rem] text-center tabular-nums">0</span>
+
+              <button
+                type="button"
+                class="qty-inc-btn flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-brand-600 hover:bg-brand-500 text-white active:scale-90 transition-all font-black text-base shadow-sm"
+                data-slug={slug}
+                data-nome={nome}
+                data-preco={precoFinal}
+                data-unidade={unidade}
+                data-imagem={imagem}
+                aria-label="Adicionar mais um"
+              >+</button>
+            </div>
+          </div>
         ) : (
           <button
             disabled
@@ -168,9 +194,57 @@ const precoFinal = temPromocao ? precoPromocional : preco;
 </div>
 
 <script>
-  // Usa delegação de eventos no document para garantir que funcione
-  // mesmo quando o carrinhoMercado ainda não foi inicializado
-  function handleAddToCart(btn: HTMLButtonElement) {
+  const CART_KEY = 'bompreco_cart_v1';
+
+  function getCart(): any[] {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch { return []; }
+  }
+
+  function saveCart(cart: any[]) {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    window.dispatchEvent(new CustomEvent('cart:updated'));
+  }
+
+  function getQty(slug: string): number {
+    const item = getCart().find((i: any) => i.slug === slug);
+    return item ? (item.quantidade || 0) : 0;
+  }
+
+  // Sincroniza a UI de um wrapper com a quantidade atual do carrinho
+  function syncWrapper(wrapper: Element) {
+    const slug = wrapper.getAttribute('data-slug') || '';
+    const qty = getQty(slug);
+    const addBtn = wrapper.querySelector('.qty-add-btn') as HTMLElement | null;
+    const stepper = wrapper.querySelector('.qty-stepper') as HTMLElement | null;
+    const display = wrapper.querySelector('.qty-display') as HTMLElement | null;
+
+    if (!addBtn || !stepper || !display) return;
+
+    if (qty > 0) {
+      addBtn.classList.add('hidden');
+      stepper.classList.remove('hidden');
+      stepper.classList.add('flex');
+      display.textContent = String(qty);
+    } else {
+      addBtn.classList.remove('hidden');
+      stepper.classList.add('hidden');
+      stepper.classList.remove('flex');
+    }
+  }
+
+  // Sincroniza todos os wrappers da página
+  function syncAll() {
+    document.querySelectorAll('.qty-ctrl-wrapper').forEach(syncWrapper);
+  }
+
+  // Anima o display de quantidade com um pulso
+  function animateQty(display: HTMLElement) {
+    display.classList.add('scale-125', 'text-emerald-600');
+    setTimeout(() => display.classList.remove('scale-125', 'text-emerald-600'), 250);
+  }
+
+  // Adiciona 1 unidade ao carrinho
+  function handleAdd(btn: HTMLElement) {
     const slug = btn.getAttribute('data-slug') || '';
     const nome = btn.getAttribute('data-nome') || '';
     const preco = parseFloat(btn.getAttribute('data-preco') || '0');
@@ -178,42 +252,90 @@ const precoFinal = temPromocao ? precoPromocional : preco;
     const imagem = btn.getAttribute('data-imagem') || '';
 
     if (window.carrinhoMercado) {
-      // Importante: NÃO abre o carrinho, apenas adiciona e exibe toast
-      window.carrinhoMercado.adicionar({
-        slug,
-        nome,
-        preco,
-        unidade,
-        imagem,
-      }, false);
-
-      // Feedback visual no botão
-      const textSpan = btn.querySelector('.btn-text');
-      if (textSpan) {
-        const originalHtml = textSpan.innerHTML;
-        textSpan.textContent = 'Adicionado! ✓';
-        btn.classList.remove('bg-brand-600', 'hover:bg-brand-500');
-        btn.classList.add('bg-emerald-600');
-        setTimeout(() => {
-          if (textSpan) textSpan.innerHTML = originalHtml;
-          btn.classList.add('bg-brand-600', 'hover:bg-brand-500');
-          btn.classList.remove('bg-emerald-600');
-        }, 1200);
-      }
+      window.carrinhoMercado.adicionar({ slug, nome, preco, unidade, imagem }, false);
     } else {
-      // Carrinho ainda não carregou, tenta novamente em breve
-      console.warn('[Carrinho] carrinhoMercado não disponível ainda, tentando novamente...');
-      setTimeout(() => handleAddToCart(btn), 200);
+      // Fallback direto no localStorage se o carrinho ainda não carregou
+      const cart = getCart();
+      const idx = cart.findIndex((i: any) => i.slug === slug);
+      if (idx >= 0) {
+        cart[idx].quantidade = (cart[idx].quantidade || 1) + 1;
+      } else {
+        cart.push({ slug, nome, preco, unidade, imagem, quantidade: 1 });
+      }
+      saveCart(cart);
+    }
+
+    // Feedback visual imediato sem esperar o evento
+    const wrapper = document.querySelector(`.qty-ctrl-wrapper[data-slug="${slug}"]`);
+    if (wrapper) {
+      syncWrapper(wrapper);
+      const display = wrapper.querySelector('.qty-display') as HTMLElement | null;
+      if (display) animateQty(display);
     }
   }
 
-  // Delegação de eventos: captura cliques em qualquer botão .btn-add-carrinho
+  // Remove 1 unidade (ou remove do carrinho se chegar a 0)
+  function handleDec(slug: string) {
+    const cart = getCart();
+    const idx = cart.findIndex((i: any) => i.slug === slug);
+    if (idx < 0) return;
+
+    if ((cart[idx].quantidade || 1) <= 1) {
+      cart.splice(idx, 1);
+    } else {
+      cart[idx].quantidade = (cart[idx].quantidade || 1) - 1;
+    }
+    saveCart(cart);
+
+    // Se o carrinhoMercado está carregado, sincroniza o estado interno dele também
+    if (window.carrinhoMercado && typeof window.carrinhoMercado.sincronizarDoStorage === 'function') {
+      window.carrinhoMercado.sincronizarDoStorage();
+    }
+
+    const wrapper = document.querySelector(`.qty-ctrl-wrapper[data-slug="${slug}"]`);
+    if (wrapper) syncWrapper(wrapper);
+  }
+
+  // Delegação de eventos global
   document.addEventListener('click', (e) => {
-    const btn = (e.target as Element).closest('.btn-add-carrinho') as HTMLButtonElement | null;
-    if (btn) {
+    const target = e.target as Element;
+
+    // Clique no botão "Adicionar"
+    const addBtn = target.closest('.qty-add-btn') as HTMLElement | null;
+    if (addBtn) {
       e.preventDefault();
       e.stopPropagation();
-      handleAddToCart(btn);
+      handleAdd(addBtn);
+      return;
+    }
+
+    // Clique no botão "+"
+    const incBtn = target.closest('.qty-inc-btn') as HTMLElement | null;
+    if (incBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      handleAdd(incBtn);
+      return;
+    }
+
+    // Clique no botão "−"
+    const decBtn = target.closest('.qty-dec-btn') as HTMLElement | null;
+    if (decBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const slug = decBtn.getAttribute('data-slug') || '';
+      handleDec(slug);
+      return;
     }
   });
+
+  // Atualiza todos os wrappers quando o carrinho muda (ex: remoção pelo drawer)
+  window.addEventListener('cart:updated', syncAll);
+
+  // Sincronização inicial ao carregar a página
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncAll);
+  } else {
+    syncAll();
+  }
 </script>
