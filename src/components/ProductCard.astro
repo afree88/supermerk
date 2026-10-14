@@ -80,13 +80,13 @@ const precoFinal = temPromocao ? precoPromocional : preco;
       <!-- Categoria com link para filtro -->
       <a
         href={`/produtos?categoria=${encodeURIComponent(categoria)}`}
-        class="inline-block text-[9px] sm:text-[11px] uppercase tracking-wider font-semibold text-brand-700 dark:text-emerald-300 hover:text-brand-800 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/50 dark:border-brand-800/60 px-1.5 sm:px-2 py-0.5 rounded mb-1 sm:mb-2 truncate max-w-full"
+        class="inline-block text-[9px] sm:text-[11px] uppercase tracking-wider font-semibold text-brand-700 dark:text-violet-300 hover:text-brand-800 bg-brand-50 dark:bg-brand-950/70 border border-brand-200/50 dark:border-brand-800/60 px-1.5 sm:px-2 py-0.5 rounded mb-1 sm:mb-2 truncate max-w-full"
       >
         {categoria}
       </a>
 
       <!-- Nome do Produto -->
-      <h3 class="font-bold text-slate-900 dark:text-white text-xs sm:text-base leading-snug line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] group-hover:text-brand-700 dark:group-hover:text-emerald-400 transition-colors">
+      <h3 class="font-bold text-slate-900 dark:text-white text-xs sm:text-base leading-snug line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] group-hover:text-brand-700 dark:group-hover:text-violet-400 transition-colors">
         <a href={`/produtos/${slug}`}>
           {nome}
         </a>
@@ -239,8 +239,8 @@ const precoFinal = temPromocao ? precoPromocional : preco;
 
   // Anima o display de quantidade com um pulso
   function animateQty(display: HTMLElement) {
-    display.classList.add('scale-125', 'text-emerald-600');
-    setTimeout(() => display.classList.remove('scale-125', 'text-emerald-600'), 250);
+    display.classList.add('scale-125', 'text-violet-600');
+    setTimeout(() => display.classList.remove('scale-125', 'text-violet-600'), 250);
   }
 
   // Adiciona 1 unidade ao carrinho
