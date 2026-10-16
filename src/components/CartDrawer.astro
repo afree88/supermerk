@@ -47,13 +47,13 @@ const { loja } = Astro.props;
           <button
             id="cart-clear-btn"
             type="button"
-            class="hidden items-center gap-1 text-[11px] sm:text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition active:scale-95 border border-transparent hover:border-rose-200 dark:hover:border-rose-900"
+            class="hidden items-center gap-1.5 text-xs font-bold text-rose-700 hover:text-rose-800 dark:text-rose-300 dark:hover:text-rose-200 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 transition active:scale-95 border border-rose-300 dark:border-rose-800 shadow-xs cursor-pointer"
             title="Esvaziar todos os itens do carrinho"
           >
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            <span>Limpar</span>
+            <span class="pointer-events-none">Limpar</span>
           </button>
 
           <button
@@ -113,7 +113,7 @@ const { loja } = Astro.props;
               type="text"
               id="cart-cliente-endereco"
               placeholder="Endereço, número e bairro..."
-              class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+              class="w-full px-3 py-2 text-xs rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors"
             />
           </div>
         </div>
@@ -264,7 +264,7 @@ const { loja } = Astro.props;
         type="button"
         class="w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs transition"
       >
-        ✓ Já realizei a transferência (Concluir e Limpar Carrinho)
+        ✓ Já realizei a transferência (Concluir e Salvar Pedido)
       </button>
 
       <p class="text-[11px] text-center text-slate-400">
@@ -435,16 +435,16 @@ const { loja } = Astro.props;
         totalGeral += itemTotal;
 
         return `
-          <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-            <img src="${item.imagem}" alt="${item.nome}" class="w-14 h-14 object-cover rounded-xl shrink-0 border border-slate-200 dark:border-slate-700" />
+          <div class="flex items-center gap-3 p-3 bg-white dark:bg-slate-800/90 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 shadow-xs">
+            <img src="${item.imagem}" alt="${item.nome}" class="w-14 h-14 object-cover rounded-xl shrink-0 border-2 border-slate-200 dark:border-slate-700" />
             <div class="flex-1 min-w-0">
               <h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">${item.nome}</h4>
               <span class="text-[11px] text-slate-500 dark:text-slate-400 block">${formatBRL(item.preco)} / ${item.unidade}</span>
               <div class="flex items-center gap-2 mt-1.5">
-                <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900">
-                  <button class="cart-qtd-btn px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-l" data-slug="${item.slug}" data-delta="-1">-</button>
-                  <span class="px-2 text-xs font-bold text-slate-800 dark:text-white">${item.quantidade}</span>
-                  <button class="cart-qtd-btn px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-r" data-slug="${item.slug}" data-delta="1">+</button>
+                <div class="flex items-center border-2 border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900">
+                  <button class="cart-qtd-btn px-2 py-0.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-l" data-slug="${item.slug}" data-delta="-1">-</button>
+                  <span class="px-2 text-xs font-black text-slate-900 dark:text-white">${item.quantidade}</span>
+                  <button class="cart-qtd-btn px-2 py-0.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-r" data-slug="${item.slug}" data-delta="1">+</button>
                 </div>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-violet-400 ml-auto">${formatBRL(itemTotal)}</span>
               </div>
@@ -600,18 +600,14 @@ const { loja } = Astro.props;
     const msg = gerarTextoPedido('PIX (Pago via App)');
     window.open(`https://wa.me/${lojaWhatsapp}?text=${msg}`, '_blank');
 
-    // Limpa o carrinho e fecha a interface após o pagamento
-    saveCart([]);
-    renderCart();
+    // Mantém os produtos no carrinho para segurança do usuário (não perder o trabalho)
     pixModalContainer?.classList.add('hidden');
     pixModalContainer?.classList.remove('flex');
     closeCart();
   });
 
   btnPixConcluirSemZap?.addEventListener('click', () => {
-    // Conclui e limpa o carrinho
-    saveCart([]);
-    renderCart();
+    // Fecha o modal mantendo os itens salvos
     pixModalContainer?.classList.add('hidden');
     pixModalContainer?.classList.remove('flex');
     closeCart();
@@ -621,17 +617,39 @@ const { loja } = Astro.props;
     const msg = gerarTextoPedido('Pagar na Entrega (Cartão / Dinheiro)');
     window.open(`https://wa.me/${lojaWhatsapp}?text=${msg}`, '_blank');
 
-    // Limpa o carrinho e fecha a gaveta após o envio do pedido
-    saveCart([]);
-    renderCart();
+    // Mantém os produtos no carrinho para segurança do usuário
     closeCart();
   });
 
-  // Botão Limpar Carrinho
-  cartClearBtn?.addEventListener('click', () => {
-    if (confirm('Deseja realmente esvaziar todos os itens do seu carrinho?')) {
-      saveCart([]);
-      renderCart();
+  // Função central e infalível para esvaziar o carrinho
+  function esvaziarCarrinho() {
+    saveCart([]);
+    renderCart();
+    if (cartToast && cartToastTitle && cartToastSubtitle) {
+      cartToastTitle.textContent = 'Carrinho limpo!';
+      cartToastSubtitle.textContent = 'Todos os itens foram removidos.';
+      cartToast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      cartToast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        cartToast.classList.remove('opacity-100', 'translate-y-0');
+        cartToast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      }, 2500);
+    }
+  }
+
+  // Botão Limpar Carrinho com suporte direto e delegação para máxima compatibilidade
+  cartClearBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    esvaziarCarrinho();
+  });
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('#cart-clear-btn');
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      esvaziarCarrinho();
     }
   });
 
