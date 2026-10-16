@@ -147,6 +147,14 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
       })}
     </div>
 
+    <!-- Paginação -->
+    <div id="paginacao-container" class="hidden mt-8 sm:mt-10 flex flex-col items-center gap-3">
+      <!-- Info de resultados -->
+      <p id="paginacao-info" class="text-xs text-slate-500 dark:text-slate-400 font-medium"></p>
+      <!-- Botões -->
+      <div id="paginacao-botoes" class="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center"></div>
+    </div>
+
     <!-- Mensagem de Nenhum Produto Encontrado -->
     <div
       id="mensagem-vazia"
@@ -171,25 +179,40 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
 </BaseLayout>
 
 <script>
-  // Script interativo de filtragem e ordenação no cliente
+  // =============================================
+  // CONFIGURAÇÃO
+  // =============================================
+  const ITENS_POR_PAGINA = 16;
+  let paginaAtual = 1;
+  let itemsFiltradosOrdenados: HTMLElement[] = [];
+
+  // =============================================
+  // ELEMENTOS DO DOM
+  // =============================================
   const inputBusca = document.getElementById('filtro-busca') as HTMLInputElement | null;
   const btnLimparBusca = document.getElementById('botao-limpar-busca') as HTMLButtonElement | null;
   const selectOrdenacao = document.getElementById('filtro-ordenacao') as HTMLSelectElement | null;
   const grid = document.getElementById('grid-produtos');
   const emptyState = document.getElementById('mensagem-vazia');
   const countDisplay = document.getElementById('total-count');
+  const paginacaoContainer = document.getElementById('paginacao-container');
+  const paginacaoBotoes = document.getElementById('paginacao-botoes');
+  const paginacaoInfo = document.getElementById('paginacao-info');
 
-  // Pega a URL e parâmetros atuais do navegador no cliente
+  // =============================================
+  // PARÂMETROS DE URL (SSG client-side)
+  // =============================================
   const params = new URLSearchParams(window.location.search);
   const categoriaAtiva = params.get('categoria') || '';
   const buscaParam = params.get('busca') || '';
 
-  // Inicializa o input de busca com o parâmetro da URL do cliente (essencial para SSG)
   if (inputBusca && buscaParam) {
     inputBusca.value = buscaParam;
   }
 
-  // Normalização de acentos e diacríticos para busca flexível (ex: "cafe" encontra "Café")
+  // =============================================
+  // UTILITÁRIOS
+  // =============================================
   function normalizarTexto(texto: string): string {
     return texto
       .normalize('NFD')
@@ -207,7 +230,118 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
     }
   }
 
-  function filtrarEOrdenar() {
+  // =============================================
+  // PAGINAÇÃO
+  // =============================================
+  function renderizarPagina(pagina: number) {
+    if (!grid) return;
+    paginaAtual = pagina;
+
+    const inicio = (pagina - 1) * ITENS_POR_PAGINA;
+    const fim = inicio + ITENS_POR_PAGINA;
+
+    // Esconde todos os filtrados, mostra só os da página atual
+    itemsFiltradosOrdenados.forEach((item, idx) => {
+      item.style.display = idx >= inicio && idx < fim ? '' : 'none';
+    });
+
+    renderizarBotoesPaginacao();
+    renderizarInfoPaginacao(inicio, fim);
+  }
+
+  function renderizarInfoPaginacao(inicio: number, fim: number) {
+    if (!paginacaoInfo) return;
+    const total = itemsFiltradosOrdenados.length;
+    const fimReal = Math.min(fim, total);
+    paginacaoInfo.textContent = `Exibindo ${inicio + 1}–${fimReal} de ${total} produtos`;
+  }
+
+  function renderizarBotoesPaginacao() {
+    if (!paginacaoBotoes || !paginacaoContainer) return;
+    const total = itemsFiltradosOrdenados.length;
+    const totalPaginas = Math.ceil(total / ITENS_POR_PAGINA);
+
+    // Oculta se couber em 1 página
+    if (totalPaginas <= 1) {
+      paginacaoContainer.classList.add('hidden');
+      return;
+    }
+    paginacaoContainer.classList.remove('hidden');
+
+    paginacaoBotoes.innerHTML = '';
+
+    const classeBase = 'flex items-center justify-center min-w-[36px] h-9 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-150 select-none cursor-pointer active:scale-95';
+    const classeAtivo = 'bg-brand-600 text-white shadow-md shadow-brand-600/30 scale-105';
+    const classeInativo = 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-2 border-slate-300 dark:border-slate-700 hover:border-brand-400 hover:text-brand-700 dark:hover:border-brand-500 dark:hover:text-brand-300 shadow-xs';
+    const classeDesabilitado = 'bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-600 border-2 border-slate-200 dark:border-slate-800 cursor-not-allowed opacity-50';
+
+    // Botão Anterior
+    const btnAnterior = document.createElement('button');
+    btnAnterior.type = 'button';
+    btnAnterior.innerHTML = '&#8592;';
+    btnAnterior.setAttribute('aria-label', 'Página anterior');
+    btnAnterior.className = `${classeBase} ${paginaAtual === 1 ? classeDesabilitado : classeInativo}`;
+    if (paginaAtual > 1) {
+      btnAnterior.addEventListener('click', () => { renderizarPagina(paginaAtual - 1); irParaTopo(); });
+    }
+    paginacaoBotoes.appendChild(btnAnterior);
+
+    // Lógica de elipses para muitas páginas
+    const gerarPaginas = (): (number | '...')[] => {
+      if (totalPaginas <= 7) return Array.from({ length: totalPaginas }, (_, i) => i + 1);
+      const pags: (number | '...')[] = [1];
+      if (paginaAtual > 3) pags.push('...');
+      for (let p = Math.max(2, paginaAtual - 1); p <= Math.min(totalPaginas - 1, paginaAtual + 1); p++) {
+        pags.push(p);
+      }
+      if (paginaAtual < totalPaginas - 2) pags.push('...');
+      pags.push(totalPaginas);
+      return pags;
+    };
+
+    gerarPaginas().forEach((p) => {
+      if (p === '...') {
+        const elipsis = document.createElement('span');
+        elipsis.textContent = '...';
+        elipsis.className = 'flex items-center justify-center min-w-[28px] text-slate-400 text-xs font-bold select-none';
+        paginacaoBotoes.appendChild(elipsis);
+      } else {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = String(p);
+        btn.setAttribute('aria-label', `Página ${p}`);
+        btn.setAttribute('aria-current', p === paginaAtual ? 'page' : 'false');
+        btn.className = `${classeBase} ${p === paginaAtual ? classeAtivo : classeInativo}`;
+        if (p !== paginaAtual) {
+          btn.addEventListener('click', () => { renderizarPagina(p as number); irParaTopo(); });
+        }
+        paginacaoBotoes.appendChild(btn);
+      }
+    });
+
+    // Botão Próximo
+    const btnProximo = document.createElement('button');
+    btnProximo.type = 'button';
+    btnProximo.innerHTML = '&#8594;';
+    btnProximo.setAttribute('aria-label', 'Próxima página');
+    btnProximo.className = `${classeBase} ${paginaAtual === totalPaginas ? classeDesabilitado : classeInativo}`;
+    if (paginaAtual < totalPaginas) {
+      btnProximo.addEventListener('click', () => { renderizarPagina(paginaAtual + 1); irParaTopo(); });
+    }
+    paginacaoBotoes.appendChild(btnProximo);
+  }
+
+  function irParaTopo() {
+    const gridEl = document.getElementById('grid-produtos');
+    if (gridEl) {
+      gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // =============================================
+  // FILTRAGEM + ORDENAÇÃO + PAGINAÇÃO
+  // =============================================
+  function filtrarEOrdenar(resetarPagina = true) {
     if (!grid) return;
 
     toggleBotaoLimpar();
@@ -215,32 +349,26 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
     const termoNormalizado = normalizarTexto(inputBusca?.value || '');
     const termos = termoNormalizado.split(/\s+/).filter(Boolean);
     const ordenacao = selectOrdenacao?.value || 'padrao';
-    const items = Array.from(grid.querySelectorAll('.produto-item')) as HTMLElement[];
+    const todosItems = Array.from(grid.querySelectorAll('.produto-item')) as HTMLElement[];
 
-    let visiveisCount = 0;
+    // Esconde todos primeiro
+    todosItems.forEach((item) => { item.style.display = 'none'; });
 
-    items.forEach((item) => {
+    // Filtra
+    const filtrados = todosItems.filter((item) => {
       const textoItem = normalizarTexto(item.getAttribute('data-busca') || item.getAttribute('data-nome') || '');
       const categoria = item.getAttribute('data-categoria') || '';
       const isPromo = item.getAttribute('data-promo') === 'true';
 
-      // Todas as palavras digitadas devem bater com o produto
       const bateBusca = termos.length === 0 || termos.every((t) => textoItem.includes(t));
       const bateCategoria = !categoriaAtiva || categoria === categoriaAtiva;
       const batePromo = ordenacao !== 'promocao' || isPromo;
 
-      if (bateBusca && bateCategoria && batePromo) {
-        item.style.display = '';
-        visiveisCount++;
-      } else {
-        item.style.display = 'none';
-      }
+      return bateBusca && bateCategoria && batePromo;
     });
 
-    // Ordenação dos itens visíveis no DOM
-    const itemsOrdenados = items.filter((item) => item.style.display !== 'none');
-
-    itemsOrdenados.sort((a, b) => {
+    // Ordena
+    filtrados.sort((a, b) => {
       const precoA = parseFloat(a.getAttribute('data-preco') || '0');
       const precoB = parseFloat(b.getAttribute('data-preco') || '0');
       const nomeA = a.getAttribute('data-nome') || '';
@@ -249,23 +377,29 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
       if (ordenacao === 'menor-preco') return precoA - precoB;
       if (ordenacao === 'maior-preco') return precoB - precoA;
       if (ordenacao === 'nome-asc') return nomeA.localeCompare(nomeB);
-      return 0; // padrão
+      return 0;
     });
 
-    itemsOrdenados.forEach((el) => grid.appendChild(el));
+    // Reordena no DOM
+    filtrados.forEach((el) => grid.appendChild(el));
+    itemsFiltradosOrdenados = filtrados;
 
-    // Atualiza contagem e mensagem vazia
-    if (countDisplay) {
-      countDisplay.textContent = String(visiveisCount);
-    }
+    // Atualiza contagem
+    if (countDisplay) countDisplay.textContent = String(filtrados.length);
 
+    // Estado vazio
     if (emptyState) {
-      if (visiveisCount === 0) {
+      if (filtrados.length === 0) {
         emptyState.classList.remove('hidden');
+        if (paginacaoContainer) paginacaoContainer.classList.add('hidden');
       } else {
         emptyState.classList.add('hidden');
       }
     }
+
+    // Renderiza paginação (reinicia na página 1 quando filtro muda)
+    if (resetarPagina) paginaAtual = 1;
+    renderizarPagina(paginaAtual);
   }
 
   function atualizarUrlComBusca() {
@@ -278,15 +412,17 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
     }
     window.history.replaceState({}, '', url.toString());
 
-    // Sincroniza também com os inputs do Header se existirem
     const headerDesktop = document.getElementById('header-busca-desktop') as HTMLInputElement | null;
     const headerMobile = document.getElementById('header-busca-mobile') as HTMLInputElement | null;
     if (headerDesktop && headerDesktop.value !== termo) headerDesktop.value = termo;
     if (headerMobile && headerMobile.value !== termo) headerMobile.value = termo;
   }
 
+  // =============================================
+  // EVENT LISTENERS
+  // =============================================
   inputBusca?.addEventListener('input', () => {
-    filtrarEOrdenar();
+    filtrarEOrdenar(true);
     atualizarUrlComBusca();
   });
 
@@ -294,13 +430,13 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
     if (inputBusca) {
       inputBusca.value = '';
       inputBusca.focus();
-      filtrarEOrdenar();
+      filtrarEOrdenar(true);
       atualizarUrlComBusca();
     }
   });
 
-  selectOrdenacao?.addEventListener('change', filtrarEOrdenar);
+  selectOrdenacao?.addEventListener('change', () => filtrarEOrdenar(true));
 
-  // Executa uma vez no carregamento para aplicar filtros da URL
-  filtrarEOrdenar();
+  // Inicializa ao carregar
+  filtrarEOrdenar(true);
 </script>
