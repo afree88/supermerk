@@ -65,19 +65,24 @@ const navLinks = [
     </a>
 
     <!-- Barra de Busca Rápida (Desktop e Tablet) -->
-    <form action="/produtos" method="get" class="hidden md:flex flex-1 max-w-md mx-4">
+    <form action="/produtos" method="get" class="hidden md:flex flex-1 max-w-md mx-4" id="header-search-form-desktop">
       <div class="relative w-full">
         <input
           type="text"
           name="busca"
+          id="header-busca-desktop"
           placeholder="O que você procura hoje? (ex: leite, arroz, carne)"
           class="w-full pl-10 pr-4 py-2 text-base sm:text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
         />
-        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+        <button
+          type="submit"
+          aria-label="Buscar produtos"
+          class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+        >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
-        </div>
+        </button>
       </div>
     </form>
 
@@ -148,20 +153,26 @@ const navLinks = [
 
   <!-- Barra de Busca Mobile -->
   <div class="md:hidden px-3 pb-2.5">
-    <form action="/produtos" method="get">
+    <form action="/produtos" method="get" id="header-search-form-mobile">
       <div class="relative w-full">
         <input
           type="text"
           name="busca"
+          id="header-busca-mobile"
           placeholder="Buscar produtos, marcas, ofertas..."
           class="w-full pl-9 pr-4 py-2 text-base sm:text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
         />
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+        <button
+          type="submit"
+          aria-label="Buscar produtos"
+          class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+        >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
-        </div>
+        </button>
       </div>
+    </form>
   </div>
 
   <!-- Barra de Navegação Desktop -->
@@ -287,6 +298,44 @@ const navLinks = [
       window.carrinhoMercado.abrir();
     }
   });
+
+  // Sincronização e Busca no Header
+  const headerDesktopInput = document.getElementById('header-busca-desktop') as HTMLInputElement | null;
+  const headerMobileInput = document.getElementById('header-busca-mobile') as HTMLInputElement | null;
+  const headerInputs = [headerDesktopInput, headerMobileInput].filter(Boolean) as HTMLInputElement[];
+
+  // Preenche a barra de busca do header com a busca atual da URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const termoNaUrl = urlParams.get('busca') || '';
+  if (termoNaUrl) {
+    headerInputs.forEach((inp) => {
+      inp.value = termoNaUrl;
+    });
+  }
+
+  // Se já estiver na página /produtos, sincroniza a busca em tempo real sem recarregar a página inteira
+  const isPaginaProdutos = window.location.pathname.replace(/\/$/, '') === '/produtos';
+  if (isPaginaProdutos) {
+    headerInputs.forEach((inp) => {
+      inp.addEventListener('input', () => {
+        const inputCatalogo = document.getElementById('filtro-busca') as HTMLInputElement | null;
+        if (inputCatalogo) {
+          inputCatalogo.value = inp.value;
+          inputCatalogo.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      });
+
+      inp.form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const inputCatalogo = document.getElementById('filtro-busca') as HTMLInputElement | null;
+        if (inputCatalogo) {
+          inputCatalogo.value = inp.value;
+          inputCatalogo.dispatchEvent(new Event('input', { bubbles: true }));
+          inputCatalogo.focus();
+        }
+      });
+    });
+  }
 
   window.addEventListener('cart:updated', updateHeaderBadge);
   updateHeaderBadge();

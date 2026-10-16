@@ -70,13 +70,24 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
             id="filtro-busca"
             value={buscaUrl}
             placeholder="Buscar por nome do produto..."
-            class="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-base sm:text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
+            class="w-full pl-9 sm:pl-10 pr-9 sm:pr-10 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-base sm:text-sm text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"
           />
           <div class="absolute inset-y-0 left-0 pl-3 sm:pl-3.5 flex items-center pointer-events-none text-slate-400">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
           </div>
+          <button
+            type="button"
+            id="botao-limpar-busca"
+            class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            title="Limpar busca"
+            aria-label="Limpar busca"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
         </div>
 
         <!-- Seletor de Ordenação -->
@@ -116,6 +127,7 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
             data-preco={precoEfetivo}
             data-promo={temPromo ? 'true' : 'false'}
             data-destaque={prod.data.destaque ? 'true' : 'false'}
+            data-busca={`${prod.data.nome} ${prod.data.categoria} ${prod.data.descricao || ''}`.toLowerCase()}
           >
             <ProductCard
               slug={prod.slug}
@@ -161,30 +173,59 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
 <script>
   // Script interativo de filtragem e ordenação no cliente
   const inputBusca = document.getElementById('filtro-busca') as HTMLInputElement | null;
+  const btnLimparBusca = document.getElementById('botao-limpar-busca') as HTMLButtonElement | null;
   const selectOrdenacao = document.getElementById('filtro-ordenacao') as HTMLSelectElement | null;
   const grid = document.getElementById('grid-produtos');
   const emptyState = document.getElementById('mensagem-vazia');
   const countDisplay = document.getElementById('total-count');
 
-  // Pega a categoria da URL atual se existir
+  // Pega a URL e parâmetros atuais do navegador no cliente
   const params = new URLSearchParams(window.location.search);
   const categoriaAtiva = params.get('categoria') || '';
+  const buscaParam = params.get('busca') || '';
+
+  // Inicializa o input de busca com o parâmetro da URL do cliente (essencial para SSG)
+  if (inputBusca && buscaParam) {
+    inputBusca.value = buscaParam;
+  }
+
+  // Normalização de acentos e diacríticos para busca flexível (ex: "cafe" encontra "Café")
+  function normalizarTexto(texto: string): string {
+    return texto
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
+  function toggleBotaoLimpar() {
+    if (!btnLimparBusca || !inputBusca) return;
+    if (inputBusca.value.trim().length > 0) {
+      btnLimparBusca.classList.remove('hidden');
+    } else {
+      btnLimparBusca.classList.add('hidden');
+    }
+  }
 
   function filtrarEOrdenar() {
     if (!grid) return;
 
-    const termo = inputBusca?.value.trim().toLowerCase() || '';
+    toggleBotaoLimpar();
+
+    const termoNormalizado = normalizarTexto(inputBusca?.value || '');
+    const termos = termoNormalizado.split(/\s+/).filter(Boolean);
     const ordenacao = selectOrdenacao?.value || 'padrao';
     const items = Array.from(grid.querySelectorAll('.produto-item')) as HTMLElement[];
 
     let visiveisCount = 0;
 
     items.forEach((item) => {
-      const nome = item.getAttribute('data-nome') || '';
+      const textoItem = normalizarTexto(item.getAttribute('data-busca') || item.getAttribute('data-nome') || '');
       const categoria = item.getAttribute('data-categoria') || '';
       const isPromo = item.getAttribute('data-promo') === 'true';
 
-      const bateBusca = !termo || nome.includes(termo);
+      // Todas as palavras digitadas devem bater com o produto
+      const bateBusca = termos.length === 0 || termos.every((t) => textoItem.includes(t));
       const bateCategoria = !categoriaAtiva || categoria === categoriaAtiva;
       const batePromo = ordenacao !== 'promocao' || isPromo;
 
@@ -227,7 +268,37 @@ const buscaUrl = Astro.url.searchParams.get('busca') || '';
     }
   }
 
-  inputBusca?.addEventListener('input', filtrarEOrdenar);
+  function atualizarUrlComBusca() {
+    const url = new URL(window.location.href);
+    const termo = inputBusca?.value.trim() || '';
+    if (termo) {
+      url.searchParams.set('busca', termo);
+    } else {
+      url.searchParams.delete('busca');
+    }
+    window.history.replaceState({}, '', url.toString());
+
+    // Sincroniza também com os inputs do Header se existirem
+    const headerDesktop = document.getElementById('header-busca-desktop') as HTMLInputElement | null;
+    const headerMobile = document.getElementById('header-busca-mobile') as HTMLInputElement | null;
+    if (headerDesktop && headerDesktop.value !== termo) headerDesktop.value = termo;
+    if (headerMobile && headerMobile.value !== termo) headerMobile.value = termo;
+  }
+
+  inputBusca?.addEventListener('input', () => {
+    filtrarEOrdenar();
+    atualizarUrlComBusca();
+  });
+
+  btnLimparBusca?.addEventListener('click', () => {
+    if (inputBusca) {
+      inputBusca.value = '';
+      inputBusca.focus();
+      filtrarEOrdenar();
+      atualizarUrlComBusca();
+    }
+  });
+
   selectOrdenacao?.addEventListener('change', filtrarEOrdenar);
 
   // Executa uma vez no carregamento para aplicar filtros da URL
