@@ -25,7 +25,7 @@ const navLinks = [
 
 <header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm transition-colors duration-200">
   <!-- Top bar com avisos e horários -->
-  <div class="bg-brand-950 dark:bg-black text-white text-[11px] sm:text-xs py-1.5 sm:py-2 px-3 sm:px-4 border-b border-brand-900/40">
+  <div class="bg-gradient-to-r from-brand-900 via-brand-800 to-violet-900 dark:bg-black text-white text-[11px] sm:text-xs py-1.5 sm:py-2 px-3 sm:px-4 border-b border-brand-900/40 shadow-xs">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-1.5 sm:gap-2">
       <div class="flex items-center gap-2 sm:gap-4 min-w-0">
         {loja.bannerAviso && (
@@ -72,7 +72,7 @@ const navLinks = [
           name="busca"
           id="header-busca-desktop"
           placeholder="O que você procura hoje? (ex: leite, arroz, carne)"
-          class="w-full pl-10 pr-4 py-2 text-base sm:text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
+          class="w-full pl-10 pr-4 py-2 text-base sm:text-sm bg-slate-50 hover:bg-white focus:bg-white dark:bg-slate-800 dark:focus:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-full text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 shadow-xs focus:shadow-md transition-all"
         />
         <button
           type="submit"
@@ -111,7 +111,7 @@ const navLinks = [
       <button
         id="cart-header-btn"
         type="button"
-        class="relative flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-brand-50 dark:bg-slate-800 border border-brand-200 dark:border-slate-700 text-brand-800 dark:text-brand-300 font-bold text-xs sm:text-sm hover:bg-brand-100 dark:hover:bg-slate-700 transition active:scale-95"
+        class="relative flex items-center gap-1 sm:gap-2 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-800 border border-brand-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-brand-300 font-extrabold text-xs sm:text-sm shadow-xs transition active:scale-95"
         aria-label="Abrir carrinho"
       >
         <svg class="w-4 h-4 sm:w-5 sm:h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
@@ -160,7 +160,7 @@ const navLinks = [
           name="busca"
           id="header-busca-mobile"
           placeholder="Buscar produtos, marcas, ofertas..."
-          class="w-full pl-9 pr-4 py-2 text-base sm:text-sm bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+          class="w-full pl-9 pr-4 py-2 text-base sm:text-sm bg-slate-50 hover:bg-white focus:bg-white dark:bg-slate-800 dark:focus:bg-slate-900 border border-slate-200/90 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 shadow-xs transition-all"
         />
         <button
           type="submit"
@@ -176,7 +176,7 @@ const navLinks = [
   </div>
 
   <!-- Barra de Navegação Desktop -->
-  <nav class="hidden md:block bg-slate-50 dark:bg-slate-950/60 border-t border-slate-200/80 dark:border-slate-800">
+  <nav class="hidden md:block bg-white/80 dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800/80 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center gap-1 py-1.5">
         {navLinks.map((link) => {
@@ -184,10 +184,10 @@ const navLinks = [
           return (
             <a
               href={link.href}
-              class={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+              class={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-xl transition-all ${
                 isActive
-                  ? 'bg-brand-600 text-white shadow-sm'
-                  : 'text-slate-700 dark:text-slate-300 hover:text-brand-700 dark:hover:text-brand-400 hover:bg-slate-200/60 dark:hover:bg-slate-800'
+                  ? 'bg-brand-600 text-white shadow-sm shadow-brand-500/25 font-bold'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-brand-700 dark:hover:text-brand-400 hover:bg-brand-50/70 dark:hover:bg-slate-800'
               }`}
             >
               {link.name}
@@ -197,7 +197,7 @@ const navLinks = [
 
         <a
           href="/produtos?categoria=Frutas+e+Verduras"
-          class="ml-auto inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-promo-700 dark:text-promo-300 bg-promo-50 dark:bg-promo-950/60 border border-promo-200 dark:border-promo-800 rounded-full hover:bg-promo-100 transition"
+          class="ml-auto inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-amber-800 dark:text-promo-300 bg-amber-50 dark:bg-promo-950/60 border border-amber-200/80 dark:border-promo-800 rounded-full hover:bg-amber-100/80 transition shadow-xs"
         >
           <span>🔥</span> Ofertas da Semana
         </a>
@@ -222,15 +222,7 @@ const navLinks = [
         </a>
       );
     })}
-    <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
-      <a
-        href="/admin"
-        class="inline-flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-      >
-        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-        Acesso do Gerente (CMS)
-      </a>
-    </div>
+
   </div>
 </header>
 
